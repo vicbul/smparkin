@@ -65,7 +65,7 @@ def process_reply(instance, res, created):
     print reply
     instance.iotdm_response = reply
     reply_dict = ast.literal_eval(reply[reply.find('{"'):])
-    if reply_dict.keys()[0] == 'error':
+    if reply_dict.keys()[0] == 'error': # TODO design a beter way to handle IoTdm errors
         if created ==True:
             instance.delete()
         raise ValidationError(reply_dict[reply_dict.keys()[0]])
@@ -81,12 +81,12 @@ def parse_date(date):
     date = datetime.datetime.strptime(date, "%Y%m%dT%H%M%S" )
     return date
 
-
-def remove_from_tree(sender,  instance, **kwargs): #TODO get_ancestors method returns an empty queryset when called from pre_delete signal receivers
+#TODO get_ancestors method returns an empty queryset when called from pre_delete signal receivers. It returns a list without immediate parent
+def remove_from_tree(sender,  instance, **kwargs):
     print "I've got a signal pre_delete for", instance
-    if sender in [test, APP, CONTAINER, CONTENTINSTANCE, SUBSCRIPTION]:
+    if sender in [APP, CONTAINER, CONTENTINSTANCE, SUBSCRIPTION]:
         # res_uri = '/'.join([ancestor.name for ancestor in instance.get_ancestors(include_self=True)])
-        res_parent = sender.objects.get(name=instance.parent) # this is a workaroundpulling parent object instead
+        res_parent = sender.objects.get(name=instance.parent) # this is a workaround pulling parent object instead
         res_uri = '/'.join([ancestor.name for ancestor in res_parent.get_ancestors(include_self=True)])+'/'+instance.name
         print 'uri:', res_uri
         old_stdout = sys.stdout

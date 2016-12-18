@@ -42,6 +42,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'mptt',
     'mptt_graph',
+    'django_mptt_admin',
+    'polymorphic_tree',
+    'polymorphic',
 ]
 
 MIDDLEWARE = [

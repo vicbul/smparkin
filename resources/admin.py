@@ -1,60 +1,80 @@
 from django.contrib import admin
 from mptt.admin import MPTTModelAdmin
+from django_mptt_admin.admin import DjangoMpttAdmin, FilterableDjangoMpttAdmin
+from polymorphic_tree.admin import PolymorphicMPTTParentModelAdmin, PolymorphicMPTTChildModelAdmin
 
-from models import Common, CSE, APP, CONTAINER, CONTENTINSTANCE, SUBSCRIPTION, test
-
+from models import Common, CSE, APP, CONTAINER, CONTENTINSTANCE, SUBSCRIPTION, test, test1, test2
 # Register your models here.
 
-class CommonAdmin(admin.ModelAdmin):
-    mandatory_fields = ['name','parent']
-    def __init__(self, *args, **kwargs):
-        super(CommonAdmin, self).__init__(*args, **kwargs)
-        self.list_of_fields = self.get_fields(self)#[f.name for f in APP._meta.get_fields()]#
-        #print len(self.list_of_fields), self.list_of_fields
-        optional_fields = [f for f in self.list_of_fields if f not in set(self.mandatory_fields)] #best performance and keeps order
-        self.fieldsets = [
-            ['Mandatory', {'fields': self.mandatory_fields}],
-            ['optional', {
-                'classes': ['collapse', 'bold'],
-                'fields': optional_fields}],
-        ]
 
-class CSEAdmin(CommonAdmin):
-    readonly_fields = ['resourceType']
-    mandatory_fields = ['resourceType','name','CSE_ID','CSE_Type','parent']
+'''
+# The common admin functionality for all derived models:
 
-class AppAdmin(CommonAdmin):
-    readonly_fields = ['resourceType']
-    mandatory_fields = ['resourceType','name','requestReachability','parent']
+class BaseChildAdmin(PolymorphicMPTTChildModelAdmin):
+    GENERAL_FIELDSET = (None, {
+        'fields': ('parent', 'name'),
+    })
 
-    # def formfield_for_foreignkey(self, db_field, request, **kwargs):
-    #     if db_field.name == 'parent':
-    #         kwargs['queryset'] = Common.objects.filter(resourceType = 5)
-    #     return super(AppAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+    base_model = test
+    base_fieldsets = (
+        GENERAL_FIELDSET,
+    )
 
-class CntAdmin(CommonAdmin):
-    readonly_fields = ['resourceType']
-    mandatory_fields = ['resourceType','name','parent']
 
-    # def formfield_for_foreignkey(self, db_field, request, **kwargs):
-    #     if db_field.name == 'parent':
-    #         kwargs['queryset'] = Common.objects.filter(resourceType = 2)
-    #     return super(CntAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+# Optionally some custom admin code
 
-class CinAdmin(CommonAdmin):
-    exclude = ['resourceID']
-    readonly_fields = ['resourceType']
-    mandatory_fields = ['resourceType','name','content','parent']
+class TextNodeAdmin(BaseChildAdmin):
+    pass
 
-class SubAdmin(CommonAdmin):
-    mandatory_fields = ['resourceType','name','notificationURI','notificationContentType','eventNotificationCriteria','parent']
 
-admin.site.register(CSE, CSEAdmin)
-admin.site.register(APP, AppAdmin)
-admin.site.register(CONTAINER, CntAdmin)
-admin.site.register(CONTENTINSTANCE, CinAdmin)
-admin.site.register(SUBSCRIPTION, SubAdmin)
-admin.site.register(test)
+# Create the parent admin that combines it all:
+
+class TreeNodeParentAdmin(PolymorphicMPTTParentModelAdmin):
+    base_model = test
+    child_models = (
+        (test1, BaseChildAdmin),
+        (test2, TextNodeAdmin),  # custom admin allows custom edit/delete view.
+    )
+
+    list_display = ('name', 'actions_column',)
+
+    class Media:
+        css = {
+            'all': ('admin/treenode/admin.css',)
+        }
+'''
+
+class CommonAdmin(PolymorphicMPTTChildModelAdmin):
+    GENERAL_FIELDSET = ('Mandatory', {
+        'fields': ['resourceType','name','parent'],
+    })
+
+    base_model = Common
+    base_fieldsets = (
+        GENERAL_FIELDSET,
+    )
+
+#TODO find a way to only allow creating specific resources from a specific parent node
+class CombinedAdmin(PolymorphicMPTTParentModelAdmin):
+    base_model = Common
+    child_models = (
+        (CSE, CommonAdmin),
+        (APP, CommonAdmin),
+        (CONTAINER, CommonAdmin),
+        (SUBSCRIPTION, CommonAdmin),
+        (CONTENTINSTANCE, CommonAdmin),# custom admin allows custom edit/delete view.
+    )
+
+    list_display = ('name','actions_column',)
+
+    class Media:
+        css = {
+            'all': ('admin/treenode/admin.css',)
+        }
+
+
+admin.site.register(Common, CombinedAdmin)
+# admin.site.register(test, TreeNodeParentAdmin)
 
 
 

@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 from mptt.models import MPTTModel, TreeForeignKey
+from polymorphic_tree.models import PolymorphicMPTTModel, PolymorphicTreeForeignKey
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
@@ -10,35 +11,28 @@ from django.utils import timezone
 import datetime, copy
 
 
-
-def crudn_choices():
-    # CRUDN (create, Retrieve, Update, Delete, Notify) operation to be performed
-    create = 'create'
-    retrieve = 'retrieve'
-    update = 'update'
-    delete = 'delete'
-    notify = 'notify'
-    crudn = (
-        (create, 'create'),
-        (retrieve, 'retrieve'),
-        (update, 'update'),
-        (delete, 'delete'),
-        (notify, 'notify'),
-    )
-    return crudn
-
 # Create your models here.
 
-class test(MPTTModel):
+class test(PolymorphicMPTTModel):
+    # type = models.IntegerField(default=0, choices=resource_types())
     name = models.CharField(max_length=50, unique=True)
-    parent = TreeForeignKey('self', null=True, blank=True, related_name='children', db_index=True)
+    parent = PolymorphicTreeForeignKey('self', null=True, blank=True, related_name='children', db_index=True)
 
     def __str__(self):
         return self.name
 
-class Common(MPTTModel):
+class test1(test):
+    tes1_to_parent = models.OneToOneField(test, parent_link=True)
+    test1_field = models.CharField(max_length=10, default='default test 1')
+
+class test2(test):
+    tes2_to_parent = models.OneToOneField(test, parent_link=True)
+    test2_field = models.CharField(max_length=10, default='default test 2')
+
+
+class Common(PolymorphicMPTTModel):
     # Common resource attributes present in TS-0004 TS-0004 Service Layer Core Protocol standard
-    parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
+    parent = PolymorphicTreeForeignKey('self', null=True, blank=True, related_name='children')
     resourceID = models.CharField(max_length=200, blank=True)
     name = models.CharField(max_length=200, blank=False, unique=True)
     # parentID = models.CharField(max_length=200, blank=True)
@@ -70,12 +64,6 @@ class Common(MPTTModel):
     class MPTTMeta:
         order_insertion_by = ['name']
 
-    # class Meta:
-    #     # This attibute put common and child model's attributes together in the same MySQL table
-    #     abstract = True
-
-
-
 class CSE(Common):
     #cseType = models.CharField(max_length=200, blank=True)
     resourceType = models.IntegerField(default=5, blank=False)
@@ -93,9 +81,6 @@ class CSE(Common):
 
 
 class APP(Common):
-    # content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    # object_id = models.PositiveIntegerField()
-    # content_object = GenericForeignKey('content_type', 'object_id')
     resourceType = models.IntegerField(default=2, blank=False)
     # parent_resource = models.ForeignKey(Common, on_delete=models.CASCADE, related_name='Parent Resource', default=1)
     appName = models.CharField(max_length=200, blank=True)
@@ -110,18 +95,10 @@ class APP(Common):
     requestReachability = models.BooleanField(default=True)
     #e2eSecInfo = models.CharField(max_length=200, blank=True)
 
-    # def __init__(self, *args, **kwargs):
-    #     super(APP, self).__init__(*args, **kwargs)
-    #     self._meta.get_field('resourceType').default = 2
-
 
 class CONTAINER(Common):
     resourceType = models.IntegerField(default=3, blank=False)
     # parent_resource = models.ForeignKey(Common, on_delete=models.CASCADE, related_name='Parent Resource', default=1)
-
-    # def __init__(self, *args, **kwargs):
-    #     super(CONTAINER, self).__init__(*args, **kwargs)
-    #     self._meta.get_field('resourceType').default = 3
 
 
 class CONTENTINSTANCE(Common):
@@ -133,6 +110,7 @@ class SUBSCRIPTION(Common):
     resourceType = models.IntegerField(default=23, blank=False)
     notificationURI = models.CharField(max_length=2000, blank=False, default="http://localhost:8586")
     notificationContentType = models.IntegerField(default=1)
-    eventNotificationCriteria = models.CharField(max_length=100, default='{"net":[6], "om":[6]}')
+    eventNotificationCriteria = models.CharField(max_length=100, default='{"net":[6]')
+
 
 

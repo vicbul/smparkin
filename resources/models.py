@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from mptt.models import MPTTModel, TreeForeignKey
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
@@ -28,15 +29,19 @@ def crudn_choices():
 
 # Create your models here.
 
-class test(models.Model):
-    test2 = models.ForeignKey('APP', on_delete=models.CASCADE)
-    test3 = models.ForeignKey('self')
+class test(MPTTModel):
+    name = models.CharField(max_length=50, unique=True)
+    parent = TreeForeignKey('self', null=True, blank=True, related_name='children', db_index=True)
 
-class Common(models.Model):
+    def __str__(self):
+        return self.name
+
+class Common(MPTTModel):
     # Common resource attributes present in TS-0004 TS-0004 Service Layer Core Protocol standard
+    parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
     resourceID = models.CharField(max_length=200, blank=True)
-    resourceName = models.CharField(max_length=200, blank=False)
-    parentID = models.CharField(max_length=200, blank=False)
+    name = models.CharField(max_length=200, blank=False, unique=True)
+    # parentID = models.CharField(max_length=200, blank=True)
     accessControlPolicyIDs = models.CharField(max_length=200, blank=True)
     creationTime = models.DateTimeField(blank=True, null=True)
     lastModifiedTime = models.DateTimeField(blank=True, null=True)
@@ -48,14 +53,8 @@ class Common(models.Model):
     # Below attributes are present on TS-0004 Service Layer Core Protocol standard but not on IoTdm documentation
     dynamicAuthorizationConsultationIDs = models.CharField(max_length=200, blank=True)
 
-    check_iotdm_response = False
+    check_iotdm_response = True
     iotdm_response = None
-
-
-    def __init__(self, *args, **kwargs):
-        super(Common, self).__init__(*args, **kwargs)
-        self.previous_resourceName = copy.deepcopy(self.resourceName)
-        self.previous_parentID = copy.deepcopy(self.parentID)
 
     # This function will raise a ValidationError in case check_iotdm_response is true and the iotdm server replies with
     # an error.
@@ -63,20 +62,23 @@ class Common(models.Model):
         print self.iotdm_response
         if self.iotdm_response is not None and self.iotdm_response.find('error') != -1 and self.check_iotdm_response == True:
             print 'setting error to True.'
-            raise ValidationError('Request to IoTdm server failed for '+self.resourceName+':  '+self.iotdm_response)
+            raise ValidationError('Request to IoTdm server failed for '+self.name+':  '+self.iotdm_response)
 
     def __str__(self):
-        return self.resourceName
+        return self.name
 
-    class Meta:
-        # This attibute put common and child model's attributes together in the same MySQL table
-        abstract = True
+    class MPTTMeta:
+        order_insertion_by = ['name']
+
+    # class Meta:
+    #     # This attibute put common and child model's attributes together in the same MySQL table
+    #     abstract = True
 
 
 
 class CSE(Common):
     #cseType = models.CharField(max_length=200, blank=True)
-    resourceType = 5
+    resourceType = models.IntegerField(default=5, blank=False)
     CSE_ID = models.CharField(max_length=200, blank=False, default='InCSE1')
     CSE_Type = models.CharField(max_length=200, blank=False, default='IN-CSE')
     supportedResourceType = models.CharField(max_length=200, blank=True)
@@ -94,7 +96,8 @@ class APP(Common):
     # content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     # object_id = models.PositiveIntegerField()
     # content_object = GenericForeignKey('content_type', 'object_id')
-    resourceType = 2
+    resourceType = models.IntegerField(default=2, blank=False)
+    # parent_resource = models.ForeignKey(Common, on_delete=models.CASCADE, related_name='Parent Resource', default=1)
     appName = models.CharField(max_length=200, blank=True)
     App_ID = models.CharField(max_length=200, blank=True)
     AE_ID = models.CharField(max_length=200, blank=True)
@@ -107,19 +110,27 @@ class APP(Common):
     requestReachability = models.BooleanField(default=True)
     #e2eSecInfo = models.CharField(max_length=200, blank=True)
 
+    # def __init__(self, *args, **kwargs):
+    #     super(APP, self).__init__(*args, **kwargs)
+    #     self._meta.get_field('resourceType').default = 2
 
 
 class CONTAINER(Common):
-    resourceType = 3
+    resourceType = models.IntegerField(default=3, blank=False)
+    # parent_resource = models.ForeignKey(Common, on_delete=models.CASCADE, related_name='Parent Resource', default=1)
+
+    # def __init__(self, *args, **kwargs):
+    #     super(CONTAINER, self).__init__(*args, **kwargs)
+    #     self._meta.get_field('resourceType').default = 3
 
 
 class CONTENTINSTANCE(Common):
-    resourceType = 4
+    resourceType = models.IntegerField(default=4, blank=False)
     content = models.CharField(max_length=1000, blank=False)
 
 
 class SUBSCRIPTION(Common):
-    resourceType = 23
+    resourceType = models.IntegerField(default=23, blank=False)
     notificationURI = models.CharField(max_length=2000, blank=False, default="http://localhost:8586")
     notificationContentType = models.IntegerField(default=1)
     eventNotificationCriteria = models.CharField(max_length=100, default='{"net":[6], "om":[6]}')

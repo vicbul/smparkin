@@ -5,5 +5,17 @@ two = ['a']
 
 text = '{"m2m:cin":{"a":1}}'
 
-x = ast.literal_eval(text[text.find('{"'):])
-print x.keys()[0]
+class test():
+    a = 1
+    def __init__(self):
+        print self.a
+
+class test2(test):
+    test.a = 2
+    def __init__(self):
+        print self.a
+
+one = test()
+two = test2()
+
+print one,two

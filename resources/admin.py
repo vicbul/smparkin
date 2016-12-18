@@ -1,11 +1,12 @@
 from django.contrib import admin
+from mptt.admin import MPTTModelAdmin
 
-from models import CSE, APP, CONTAINER, CONTENTINSTANCE, SUBSCRIPTION, test
+from models import Common, CSE, APP, CONTAINER, CONTENTINSTANCE, SUBSCRIPTION, test
 
 # Register your models here.
 
 class CommonAdmin(admin.ModelAdmin):
-    mandatory_fields = ['resourceName','parentID']
+    mandatory_fields = ['name','parent']
     def __init__(self, *args, **kwargs):
         super(CommonAdmin, self).__init__(*args, **kwargs)
         self.list_of_fields = self.get_fields(self)#[f.name for f in APP._meta.get_fields()]#
@@ -19,20 +20,34 @@ class CommonAdmin(admin.ModelAdmin):
         ]
 
 class CSEAdmin(CommonAdmin):
-    mandatory_fields = ['resourceName','parentID','CSE_ID','CSE_Type']
+    readonly_fields = ['resourceType']
+    mandatory_fields = ['resourceType','name','CSE_ID','CSE_Type','parent']
 
 class AppAdmin(CommonAdmin):
-    mandatory_fields = ['resourceName','parentID','requestReachability']
+    readonly_fields = ['resourceType']
+    mandatory_fields = ['resourceType','name','requestReachability','parent']
+
+    # def formfield_for_foreignkey(self, db_field, request, **kwargs):
+    #     if db_field.name == 'parent':
+    #         kwargs['queryset'] = Common.objects.filter(resourceType = 5)
+    #     return super(AppAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 class CntAdmin(CommonAdmin):
-    mandatory_fields = ['resourceName','parentID']
+    readonly_fields = ['resourceType']
+    mandatory_fields = ['resourceType','name','parent']
+
+    # def formfield_for_foreignkey(self, db_field, request, **kwargs):
+    #     if db_field.name == 'parent':
+    #         kwargs['queryset'] = Common.objects.filter(resourceType = 2)
+    #     return super(CntAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 class CinAdmin(CommonAdmin):
     exclude = ['resourceID']
-    mandatory_fields = ['resourceName','parentID','content']
+    readonly_fields = ['resourceType']
+    mandatory_fields = ['resourceType','name','content','parent']
 
 class SubAdmin(CommonAdmin):
-    mandatory_fields = ['resourceName','parentID','notificationURI','notificationContentType','eventNotificationCriteria']
+    mandatory_fields = ['resourceType','name','notificationURI','notificationContentType','eventNotificationCriteria','parent']
 
 admin.site.register(CSE, CSEAdmin)
 admin.site.register(APP, AppAdmin)

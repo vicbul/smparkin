@@ -3,7 +3,7 @@ from mptt.admin import MPTTModelAdmin
 from django_mptt_admin.admin import DjangoMpttAdmin, FilterableDjangoMpttAdmin
 from polymorphic_tree.admin import PolymorphicMPTTParentModelAdmin, PolymorphicMPTTChildModelAdmin
 
-from models import Common, CSE, APP, CONTAINER, CONTENTINSTANCE, SUBSCRIPTION, test, test1, test2
+from models import Resource, CSE, APP, CONTAINER, CONTENTINSTANCE, SUBSCRIPTION, test, test1, test2
 # Register your models here.
 
 
@@ -44,36 +44,39 @@ class TreeNodeParentAdmin(PolymorphicMPTTParentModelAdmin):
         }
 '''
 
-class CommonAdmin(PolymorphicMPTTChildModelAdmin):
+class ResourceAdmin(PolymorphicMPTTChildModelAdmin):
     GENERAL_FIELDSET = ('Mandatory', {
         'fields': ['resourceType','name','parent'],
     })
 
-    base_model = Common
+    base_model = Resource
     base_fieldsets = (
         GENERAL_FIELDSET,
     )
 
 #TODO find a way to only allow creating specific resources from a specific parent node
 class CombinedAdmin(PolymorphicMPTTParentModelAdmin):
-    base_model = Common
+    base_model = Resource
     child_models = (
-        (CSE, CommonAdmin),
-        (APP, CommonAdmin),
-        (CONTAINER, CommonAdmin),
-        (SUBSCRIPTION, CommonAdmin),
-        (CONTENTINSTANCE, CommonAdmin),# custom admin allows custom edit/delete view.
+        (CSE, ResourceAdmin),
+        (APP, ResourceAdmin),
+        (CONTAINER, ResourceAdmin), #TODO fix filtering by container. Now it raises a ValueError (not in depth-first order)
+        (SUBSCRIPTION, ResourceAdmin),
+        (CONTENTINSTANCE, ResourceAdmin),# custom admin allows custom edit/delete view.
     )
 
     list_display = ('name','actions_column',)
 
     class Media:
         css = {
-            'all': ('admin/treenode/admin.css',)
+            'all': ('admin/treenode/admin.css', 'resources/tree.css'),
         }
+        js = ('https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js',
+              'resources/view_tree.js',
+        )
 
 
-admin.site.register(Common, CombinedAdmin)
+admin.site.register(Resource, CombinedAdmin)
 # admin.site.register(test, TreeNodeParentAdmin)
 
 

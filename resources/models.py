@@ -30,8 +30,8 @@ class test2(test):
     test2_field = models.CharField(max_length=10, default='default test 2')
 
 
-class Common(PolymorphicMPTTModel):
-    # Common resource attributes present in TS-0004 TS-0004 Service Layer Core Protocol standard
+class Resource(PolymorphicMPTTModel):
+    # Resource resource attributes present in TS-0004 TS-0004 Service Layer Core Protocol standard
     parent = PolymorphicTreeForeignKey('self', null=True, blank=True, related_name='children')
     resourceID = models.CharField(max_length=200, blank=True)
     name = models.CharField(max_length=200, blank=False, unique=True)
@@ -47,7 +47,7 @@ class Common(PolymorphicMPTTModel):
     # Below attributes are present on TS-0004 Service Layer Core Protocol standard but not on IoTdm documentation
     dynamicAuthorizationConsultationIDs = models.CharField(max_length=200, blank=True)
 
-    check_iotdm_response = True
+    check_iotdm_response = False
     iotdm_response = None
 
     # This function will raise a ValidationError in case check_iotdm_response is true and the iotdm server replies with
@@ -64,7 +64,7 @@ class Common(PolymorphicMPTTModel):
     class MPTTMeta:
         order_insertion_by = ['name']
 
-class CSE(Common):
+class CSE(Resource):
     #cseType = models.CharField(max_length=200, blank=True)
     resourceType = models.IntegerField(default=5, blank=False)
     CSE_ID = models.CharField(max_length=200, blank=False, default='InCSE1')
@@ -80,9 +80,9 @@ class CSE(Common):
     notificationCongestionPolicy = models.CharField(max_length=200, blank=True)
 
 
-class APP(Common):
+class APP(Resource):
     resourceType = models.IntegerField(default=2, blank=False)
-    # parent_resource = models.ForeignKey(Common, on_delete=models.CASCADE, related_name='Parent Resource', default=1)
+    # parent_resource = models.ForeignKey(Resource, on_delete=models.CASCADE, related_name='Parent Resource', default=1)
     appName = models.CharField(max_length=200, blank=True)
     App_ID = models.CharField(max_length=200, blank=True)
     AE_ID = models.CharField(max_length=200, blank=True)
@@ -96,17 +96,17 @@ class APP(Common):
     #e2eSecInfo = models.CharField(max_length=200, blank=True)
 
 
-class CONTAINER(Common):
+class CONTAINER(Resource):
     resourceType = models.IntegerField(default=3, blank=False)
-    # parent_resource = models.ForeignKey(Common, on_delete=models.CASCADE, related_name='Parent Resource', default=1)
+    # parent_resource = models.ForeignKey(Resource, on_delete=models.CASCADE, related_name='Parent Resource', default=1)
 
 
-class CONTENTINSTANCE(Common):
+class CONTENTINSTANCE(Resource):
     resourceType = models.IntegerField(default=4, blank=False)
     content = models.CharField(max_length=1000, blank=False)
 
 
-class SUBSCRIPTION(Common):
+class SUBSCRIPTION(Resource):
     resourceType = models.IntegerField(default=23, blank=False)
     notificationURI = models.CharField(max_length=2000, blank=False, default="http://localhost:8586")
     notificationContentType = models.IntegerField(default=1)

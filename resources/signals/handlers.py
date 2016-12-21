@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.db.models.signals import pre_init, post_init, pre_save, pre_delete, post_save, post_delete
 from iotdm import iotdm_api
 from iotdm.onem2m_xml_protocols import ae, container, subscription, contentinstance
-from resources.models import Common, test, CSE, APP, CONTAINER, CONTENTINSTANCE, SUBSCRIPTION
+from resources.models import Resource, test, CSE, APP, CONTAINER, CONTENTINSTANCE, SUBSCRIPTION
 from resources.iotdm_utils import cse_provisioning
 import datetime, ast
 
@@ -44,6 +44,8 @@ def add_to_tree(sender, instance, created, **kwargs):
 
 
 def process_reply(instance, res, created):
+    if instance.check_iotdm_response == False:
+        return
     old_stdout = sys.stdout
     sys.stdout = mystdout = StringIO()
     parent_uri = '/'.join([ancestor.name for ancestor in instance.get_ancestors()])
@@ -51,7 +53,7 @@ def process_reply(instance, res, created):
     # if instance.creationTime is None:
     res.set_rn(instance.name)
     payload = res.to_JSON()
-    create_res = iotdm_api.create('http://localhost:8282/'+parent_uri, instance.resourceType, payload,
+    create_res = iotdm_api.create('http://10.48.18.34:8282/'+parent_uri, instance.resourceType, payload,
                                   origin="/django-admin", requestID="12345")
     # else: TODO Find a way to update resources that already exist in the tree
     #     res.set_rn(instance.name)
@@ -65,7 +67,7 @@ def process_reply(instance, res, created):
     print reply
     instance.iotdm_response = reply
     reply_dict = ast.literal_eval(reply[reply.find('{"'):])
-    if reply_dict.keys()[0] == 'error': # TODO design a beter way to handle IoTdm errors
+    if reply.find('error') != -1: # TODO design a beter way to handle IoTdm errors
         if created ==True:
             instance.delete()
         raise ValidationError(reply_dict[reply_dict.keys()[0]])

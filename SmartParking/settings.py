@@ -25,7 +25,7 @@ SECRET_KEY = '^$sybe8l#8cd#9nd5y0e&2=*6*b$qg+&1e^li%tm_9xqnvp_#u'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['smparking.pythonanywhere.com']
 
 
 # Application definition

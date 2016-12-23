@@ -1,6 +1,5 @@
 from django.contrib import admin
 from mptt.admin import MPTTModelAdmin
-from django_mptt_admin.admin import DjangoMpttAdmin, FilterableDjangoMpttAdmin
 from polymorphic_tree.admin import PolymorphicMPTTParentModelAdmin, PolymorphicMPTTChildModelAdmin
 
 from models import Resource, CSE, APP, CONTAINER, CONTENTINSTANCE, SUBSCRIPTION, test, test1, test2

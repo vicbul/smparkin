@@ -1,20 +1,6 @@
 import requests
 import mptt_graph
 
-def get_parents_ids(child):
-    CSEBase = 'InCSE1'
-    pids = [CSEBase]
-    aes = APP.objects.all()
-    cnts = CONTAINER.objects.all()
-    cins = CONTENTINSTANCE.objects.all()
-    subs = SUBSCRIPTION.objects.all()
-    pids = []
-    if child == 'ae':
-        pids.append(CSEBase)
-    elif child == 'cnt':
-        for res in aes+cnts:
-            pids.append(res.parentID)
-    return pids
 
 def cse_provisioning(sender, instance, **kwargs): #cse_id='InCSE1', cse_type='IN-CSE'):
     cse_id = instance.CSE_ID

@@ -31,7 +31,7 @@ ALLOWED_HOSTS = ['smparking.pythonanywhere.com']
 # Application definition
 
 INSTALLED_APPS = [
-    'iotdb_link.apps.IotdbLinkConfig',
+    # 'iotdb_link.apps.IotdbLinkConfig',
     'resources.apps.ResourcesConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -129,6 +129,8 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
+
+STATIC_ROOT = 'home/smparking/smparking/static'
 
 STATIC_URL = '/static/'
 

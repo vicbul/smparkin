@@ -16,8 +16,9 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'resources/', include('resources.urls')),
-    url('^graph/', include('mptt_graph.urls')),
+    url(r'^graph/', include('mptt_graph.urls')),
 ]

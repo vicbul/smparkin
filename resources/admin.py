@@ -1,10 +1,11 @@
 from django.contrib import admin
 from mptt.admin import MPTTModelAdmin
+from django_mptt_admin.admin import DjangoMpttAdmin, FilterableDjangoMpttAdmin
 from polymorphic_tree.admin import PolymorphicMPTTParentModelAdmin, PolymorphicMPTTChildModelAdmin
 
 from models import Resource, CSE, APP, CONTAINER, CONTENTINSTANCE, SUBSCRIPTION, test, test1, test2
-# Register your models here.
 
+# Register your models here.
 
 '''
 # The common admin functionality for all derived models:
@@ -41,7 +42,6 @@ class TreeNodeParentAdmin(PolymorphicMPTTParentModelAdmin):
         css = {
             'all': ('admin/treenode/admin.css',)
         }
-'''
 
 class ResourceAdmin(PolymorphicMPTTChildModelAdmin):
     GENERAL_FIELDSET = ('Mandatory', {
@@ -52,15 +52,52 @@ class ResourceAdmin(PolymorphicMPTTChildModelAdmin):
     base_fieldsets = (
         GENERAL_FIELDSET,
     )
+'''
+
+class CommonAdmin(admin.ModelAdmin):
+    readonly_fields = ['resourceType']
+    mandatory_fields = ['resourceType','name','parent']
+    def __init__(self, *args, **kwargs):
+        super(CommonAdmin, self).__init__(*args, **kwargs)
+        self.list_of_fields = self.get_fields(self)#[f.name for f in APP._meta.get_fields()]#
+        #print len(self.list_of_fields), self.list_of_fields
+        optional_fields = [f for f in self.list_of_fields if f not in set(self.mandatory_fields)] #best performance and keeps order
+        self.fieldsets = [
+            ['Mandatory', {'fields': self.mandatory_fields}],
+            ['optional', {
+                'classes': ['collapse', 'bold'],
+                'fields': optional_fields}],
+        ]
+
+
+class CSEAdmin(CommonAdmin):
+    mandatory_fields = ['resourceType','name','CSE_ID','CSE_Type','parent']
+
+
+class AppAdmin(CommonAdmin):
+    mandatory_fields = ['resourceType','name','requestReachability','parent']
+
+
+class CntAdmin(CommonAdmin):
+    mandatory_fields = ['resourceType','name','parent']
+
+
+class CinAdmin(CommonAdmin):
+    exclude = ['resourceID']
+    mandatory_fields = ['resourceType','name','content','parent']
+
+class SubAdmin(CommonAdmin):
+    mandatory_fields = ['resourceType','name','notificationURI','notificationContentType','eventNotificationCriteria','parent']
+
 
 class CombinedAdmin(PolymorphicMPTTParentModelAdmin):
     base_model = Resource
     child_models = (
-        (CSE, ResourceAdmin),
-        (APP, ResourceAdmin),
-        (CONTAINER, ResourceAdmin), #TODO fix filtering by container. Now it raises a ValueError sometimes (not in depth-first order)
-        (SUBSCRIPTION, ResourceAdmin),
-        (CONTENTINSTANCE, ResourceAdmin),# custom admin allows custom edit/delete view.
+        (CSE, CSEAdmin),
+        (APP, AppAdmin),
+        (CONTAINER, CntAdmin), #TODO fix filtering by container. Now it raises a ValueError (not in depth-first order)
+        (SUBSCRIPTION, SubAdmin),
+        (CONTENTINSTANCE, CinAdmin),# custom admin allows custom edit/delete view.
     )
 
     list_display = ('name','actions_column',)
@@ -72,7 +109,6 @@ class CombinedAdmin(PolymorphicMPTTParentModelAdmin):
         js = ('https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js',
               'resources/view_tree.js',
         )
-
 
 admin.site.register(Resource, CombinedAdmin)
 # admin.site.register(test, TreeNodeParentAdmin)

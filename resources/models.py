@@ -34,7 +34,7 @@ class Resource(PolymorphicMPTTModel):
     # Resource resource attributes present in TS-0004 TS-0004 Service Layer Core Protocol standard
     parent = PolymorphicTreeForeignKey('self', null=True, blank=True, related_name='children')
     resourceID = models.CharField(max_length=200, blank=True)
-    name = models.CharField(max_length=200, blank=False, unique=True)
+    name = models.CharField(max_length=200, blank=False)
     # parentID = models.CharField(max_length=200, blank=True)
     accessControlPolicyIDs = models.CharField(max_length=200, blank=True)
     creationTime = models.DateTimeField(blank=True, null=True)

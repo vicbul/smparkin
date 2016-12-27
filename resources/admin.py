@@ -53,13 +53,12 @@ class ResourceAdmin(PolymorphicMPTTChildModelAdmin):
         GENERAL_FIELDSET,
     )
 
-#TODO find a way to only allow creating specific resources from a specific parent node
 class CombinedAdmin(PolymorphicMPTTParentModelAdmin):
     base_model = Resource
     child_models = (
         (CSE, ResourceAdmin),
         (APP, ResourceAdmin),
-        (CONTAINER, ResourceAdmin), #TODO fix filtering by container. Now it raises a ValueError (not in depth-first order)
+        (CONTAINER, ResourceAdmin), #TODO fix filtering by container. Now it raises a ValueError sometimes (not in depth-first order)
         (SUBSCRIPTION, ResourceAdmin),
         (CONTENTINSTANCE, ResourceAdmin),# custom admin allows custom edit/delete view.
     )

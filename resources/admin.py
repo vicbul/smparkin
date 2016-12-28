@@ -54,6 +54,9 @@ class ResourceAdmin(PolymorphicMPTTChildModelAdmin):
     )
 '''
 
+def del_button(self, obj):
+    return
+
 class CommonAdmin(admin.ModelAdmin):
     readonly_fields = ['resourceType']
     mandatory_fields = ['resourceType','name','parent']
@@ -100,7 +103,12 @@ class CombinedAdmin(PolymorphicMPTTParentModelAdmin):
         (CONTENTINSTANCE, CinAdmin),# custom admin allows custom edit/delete view.
     )
 
+
     list_display = ('name','actions_column',)
+
+    # def resource_type(self, obj):
+    #     return ('%s' % type(obj).__name__).lower()
+    # resource_type.short_description = 'Resource Type'
 
     class Media:
         css = {

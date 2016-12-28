@@ -105,6 +105,8 @@ class CONTENTINSTANCE(Resource):
     resourceType = models.IntegerField(default=4, blank=False)
     content = models.CharField(max_length=1000, blank=False)
 
+    can_have_children = False
+
 
 class SUBSCRIPTION(Resource):
     resourceType = models.IntegerField(default=23, blank=False)

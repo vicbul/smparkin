@@ -1,14 +1,9 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from mptt.models import MPTTModel, TreeForeignKey
 from polymorphic_tree.models import PolymorphicMPTTModel, PolymorphicTreeForeignKey
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
-from django.http import Http404
-from django.utils import timezone
-import datetime, copy
+import datetime
 
 
 # Create your models here.

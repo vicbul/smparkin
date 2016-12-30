@@ -112,7 +112,7 @@ class SUBSCRIPTION(Resource):
     resourceType = models.IntegerField(default=23, blank=False)
     notificationURI = models.CharField(max_length=2000, blank=False, default="http://localhost:8586")
     notificationContentType = models.IntegerField(default=1)
-    eventNotificationCriteria = models.CharField(max_length=100, default='{"net":[6]')
+    eventNotificationCriteria = models.CharField(max_length=100, default='{"net":[6]}')
 
 
 

@@ -54,10 +54,8 @@ class ResourceAdmin(PolymorphicMPTTChildModelAdmin):
     )
 '''
 
-def del_button(self, obj):
-    return
-
-class CommonAdmin(admin.ModelAdmin):
+class CommonAdmin(PolymorphicMPTTChildModelAdmin):
+    base_model = Resource
     readonly_fields = ['resourceType']
     mandatory_fields = ['resourceType','name','parent']
     def __init__(self, *args, **kwargs):
@@ -65,7 +63,7 @@ class CommonAdmin(admin.ModelAdmin):
         self.list_of_fields = self.get_fields(self)#[f.name for f in APP._meta.get_fields()]#
         #print len(self.list_of_fields), self.list_of_fields
         optional_fields = [f for f in self.list_of_fields if f not in set(self.mandatory_fields)] #best performance and keeps order
-        self.fieldsets = [
+        self.base_fieldsets = [
             ['Mandatory', {'fields': self.mandatory_fields}],
             ['optional', {
                 'classes': ['collapse', 'bold'],
@@ -74,22 +72,27 @@ class CommonAdmin(admin.ModelAdmin):
 
 
 class CSEAdmin(CommonAdmin):
+    base_model = CSE
     mandatory_fields = ['resourceType','name','CSE_ID','CSE_Type','parent']
 
 
 class AppAdmin(CommonAdmin):
+    base_model = APP
     mandatory_fields = ['resourceType','name','requestReachability','parent']
 
 
 class CntAdmin(CommonAdmin):
+    base_model = CONTAINER
     mandatory_fields = ['resourceType','name','parent']
 
 
 class CinAdmin(CommonAdmin):
+    base_model = CONTENTINSTANCE
     exclude = ['resourceID']
     mandatory_fields = ['resourceType','name','content','parent']
 
 class SubAdmin(CommonAdmin):
+    base_model = SUBSCRIPTION
     mandatory_fields = ['resourceType','name','notificationURI','notificationContentType','eventNotificationCriteria','parent']
 
 
@@ -103,12 +106,7 @@ class CombinedAdmin(PolymorphicMPTTParentModelAdmin):
         (CONTENTINSTANCE, CinAdmin),# custom admin allows custom edit/delete view.
     )
 
-
     list_display = ('name','actions_column',)
-
-    # def resource_type(self, obj):
-    #     return ('%s' % type(obj).__name__).lower()
-    # resource_type.short_description = 'Resource Type'
 
     class Media:
         css = {

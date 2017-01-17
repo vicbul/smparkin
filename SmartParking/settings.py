@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
-import os
+import os, socket
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -80,31 +80,38 @@ WSGI_APPLICATION = 'SmartParking.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
-# MySQL on PythonAnyWhere
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'smparking$smartparking',
-        'USER': 'smparking',
-        'PASSWORD': 'smp312SQL',
-        'HOST': 'smparking.mysql.pythonanywhere-services.com',
-        'PORT': '3306',
+# Check whether MySQL production server is reachable. Otherwise connect to localhost.
+data_connect = socket.socket()
+try:
+    host = 'smparking.mysql.pythonanywhere-services.com'
+    port = '3306'
+    data_connect.connect((host,port))
+    # MySQL on PythonAnyWhere
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'smparking$smartparking',
+            'USER': 'smparking',
+            'PASSWORD': 'smp312SQL',
+            'HOST': host,
+            'PORT': port,
+        }
     }
-}
-
-# MySQL on localhost
-# DATABASES = {
-#     'default': {
-#         #'ENGINE': 'django.db.backends.sqlite3',
-#         #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'smartparking',
-#         'USER': 'spadmin',
-#         'PASSWORD': 'spadmin',
-#         'HOST': '127.0.0.1',
-#         'PORT': '3306',
-#     }
-# }
+except:
+    print 'Could not reach smparking MySQL server. Connecting to localhost...'
+    # MySQL on localhost
+    DATABASES = {
+        'default': {
+            #'ENGINE': 'django.db.backends.sqlite3',
+            #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'smartparking',
+            'USER': 'spadmin',
+            'PASSWORD': 'spadmin',
+            'HOST': '127.0.0.1',
+            'PORT': '3306',
+        }
+    }
 
 
 # Password validation

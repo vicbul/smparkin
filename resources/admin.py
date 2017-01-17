@@ -61,6 +61,7 @@ class CommonAdmin(PolymorphicMPTTChildModelAdmin):
         self.list_of_fields = self.get_fields(self)#[f.name for f in APP._meta.get_fields()]#
         #print len(self.list_of_fields), self.list_of_fields
         optional_fields = [f for f in self.list_of_fields if f not in set(self.mandatory_fields)] #best performance and keeps order
+        # Using base_fieldsets instead of fieldsets for Polymorphic models)
         self.base_fieldsets = [
             ['Mandatory', {'fields': self.mandatory_fields}],
             ['optional', {

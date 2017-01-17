@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
+    # 'rest_framework',
     'mptt',
     'mptt_graph',
     'polymorphic_tree',
@@ -76,7 +76,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'SmartParking.wsgi.application'
 
-
+# TODO find a way to effectively connect to pythonanywhere or local
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 

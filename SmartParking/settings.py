@@ -85,7 +85,7 @@ data_connect = socket.socket()
 try:
     host = 'smparking.mysql.pythonanywhere-services.com'
     port = '3306'
-    data_connect.connect((host,port))
+    data_connect.connect((host,int(port)))
     # MySQL on PythonAnyWhere
     DATABASES = {
         'default': {

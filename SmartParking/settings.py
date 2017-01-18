@@ -81,11 +81,10 @@ WSGI_APPLICATION = 'SmartParking.wsgi.application'
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
 # Check whether MySQL production server is reachable. Otherwise connect to localhost.
-data_connect = socket.socket()
-# try:
+# data_connect = socket.socket()
 host = 'smparking.mysql.pythonanywhere-services.com'
 port = '3306'
-data_connect.connect((host,int(port)))
+# data_connect.connect((host,int(port)))
 # MySQL on PythonAnyWhere
 DATABASES = {
     'default': {
@@ -97,21 +96,20 @@ DATABASES = {
         'PORT': port,
     }
 }
-# except:
-#     print 'Could not reach smparking MySQL server. Connecting to localhost...'
-#     # MySQL on localhost
-#     DATABASES = {
-#         'default': {
-#             #'ENGINE': 'django.db.backends.sqlite3',
-#             #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#             'ENGINE': 'django.db.backends.mysql',
-#             'NAME': 'smartparking',
-#             'USER': 'spadmin',
-#             'PASSWORD': 'spadmin',
-#             'HOST': '127.0.0.1',
-#             'PORT': '3306',
-#         }
+
+# MySQL on localhost
+# DATABASES = {
+#     'default': {
+#         #'ENGINE': 'django.db.backends.sqlite3',
+#         #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'smartparking',
+#         'USER': 'spadmin',
+#         'PASSWORD': 'spadmin',
+#         'HOST': '127.0.0.1',
+#         'PORT': '3306',
 #     }
+# }
 
 
 # Password validation

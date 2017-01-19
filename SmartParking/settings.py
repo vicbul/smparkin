@@ -86,30 +86,30 @@ host = 'smparking.mysql.pythonanywhere-services.com'
 port = '3306'
 # data_connect.connect((host,int(port)))
 # MySQL on PythonAnyWhere
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'smparking$smartparking',
-        'USER': 'smparking',
-        'PASSWORD': 'smp312SQL',
-        'HOST': host,
-        'PORT': port,
-    }
-}
-
-# MySQL on localhost
 # DATABASES = {
 #     'default': {
-#         #'ENGINE': 'django.db.backends.sqlite3',
-#         #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
 #         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'smartparking',
-#         'USER': 'spadmin',
-#         'PASSWORD': 'spadmin',
-#         'HOST': '127.0.0.1',
-#         'PORT': '3306',
+#         'NAME': 'smparking$smartparking',
+#         'USER': 'smparking',
+#         'PASSWORD': 'smp312SQL',
+#         'HOST': host,
+#         'PORT': port,
 #     }
 # }
+
+# MySQL on localhost
+DATABASES = {
+    'default': {
+        #'ENGINE': 'django.db.backends.sqlite3',
+        #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'smartparking',
+        'USER': 'spadmin',
+        'PASSWORD': 'spadmin',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+    }
+}
 
 
 # Password validation

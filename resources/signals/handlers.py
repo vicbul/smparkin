@@ -1,14 +1,14 @@
 from django.core.exceptions import ValidationError
 from django.db.models.signals import pre_init, post_init, pre_save, pre_delete, post_save, post_delete
-from iotdm.onem2m_xml_protocols import ae, container, subscription, contentinstance
 from resources.models import Resource, test, CSE, APP, CONTAINER, CONTENTINSTANCE, SUBSCRIPTION
 from mptt_graph.models import GraphModel
 from resources.references import longToShortDict, shortToLongDict
 from SmartParking import settings
-import datetime, ast, requests
+import datetime, requests
 
 if settings.CHECK_IOTDM_RESPONSE is True:
     from iotdm import iotdm_api
+    from iotdm.onem2m_xml_protocols import ae, container, subscription, contentinstance
 
 # TODO consider overriding save() method instead of using signals
 

@@ -1,6 +1,4 @@
 import requests
-import mptt_graph
-
 
 def cse_provisioning(sender, instance, **kwargs): #cse_id='InCSE1', cse_type='IN-CSE'):
     cse_id = instance.CSE_ID

@@ -1,7 +1,6 @@
 from django.shortcuts import render, render_to_response
 from django.http import HttpResponse
-
-from resources.models import test
+from django.views.generic import View
 
 # Create your views here.
 
@@ -9,8 +8,13 @@ def subscription(request):
     #print 'request', request
     return render(request, 'resources/subscriptions.html')
 
-def test(request):
+# View to display get or post data
+# class MyView(View):
+#     def get(self, request, *args, **kwargs):
+#         return HttpResponse('This is GET request')
+#
+#     def post(self, request, *args, **kwargs):
+#         return HttpResponse('This is POST request')
 
-    return render_to_response("test.html",
-                          {'nodes':test.objects.all()},
-                          context_instance=RequestContext(request))
+
+

@@ -1,0 +1,8 @@
+django
+django-mptt
+django-polymorphic
+django-polymorphic_tree
+requests
+PyMySQL
+djangorestframework
+virtualenv

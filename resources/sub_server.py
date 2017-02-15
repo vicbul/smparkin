@@ -1,8 +1,11 @@
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import cgi
-from iotdm import iotdm_api
+from SmartParking import settings
 import json, sys, ast
 from cStringIO import StringIO
+
+if settings.CHECK_IOTDM_RESPONSE is True:
+    from iotdm import iotdm_api
 
 class MyBaseHTTPRequestHandler (BaseHTTPRequestHandler):
     def do_GET(self):
@@ -14,20 +17,20 @@ class MyBaseHTTPRequestHandler (BaseHTTPRequestHandler):
         return
 
     def do_POST(self):
-        print 'Getting post info.'
-        print self.client_address
+        print 'Getting post info from:', self.client_address
         form = cgi.FieldStorage(
             fp=self.rfile,
             headers=self.headers,
             environ={'REQUEST_METHOD':'POST',
                      'CONTENT_TYPE':self.headers['Content-Type'],
         })
-        print form.headers, form.value
-        form_to_dict = ast.literal_eval(form.value)
-        # target_URI = form_to_dict['nev']['rep']['rn']
-        data = form_to_dict['nev']['rep']
-        print data
-        # self.get_instance_data('http://localhost:8282',target_URI)
+        print 'headers:\n', form.headers
+        print 'values', eval(form.value)
+        # form_to_dict = ast.literal_eval(form.value)
+        # # target_URI = form_to_dict['nev']['rep']['rn']
+        # data = form_to_dict['nev']['rep']
+        # print 'data:', data
+        # # self.get_instance_data('http://localhost:8282',target_URI)
         return
 
     def get_instance_data(self, target_host, target_URI):

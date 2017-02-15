@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/1.10/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.10/ref/settings/
 """
-
 import os, socket
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -27,6 +26,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['smparking.pythonanywhere.com']
 
+CSRF_COOKIE_SECURE = False
+
 
 # Application definition
 
@@ -39,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'rest_framework',
+    'rest_framework',
     'mptt',
     'mptt_graph',
     'polymorphic_tree',
@@ -61,7 +62,7 @@ ROOT_URLCONF = 'SmartParking.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['resources.templates.admin.resources'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -156,3 +157,10 @@ STATIC_URL = '/static/'
 # Number of GET/POST parameters allowed at once (it allow to delete up to such number of rows in database)
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
+
+# IoTdm server
+IOTDM_IP = '127.0.0.1'
+IOTDM_PORT = '8282'
+IOTDM_SERVER = 'http://localhost:8282/'#'http://10.48.18.34:8282/'
+# To connect with IoTdm handlers need to be imported in resources.apps.ResourcesConfig.ready
+CHECK_IOTDM_RESPONSE = False

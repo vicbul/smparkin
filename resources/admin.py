@@ -1,61 +1,28 @@
 from django.contrib import admin
 from polymorphic_tree.admin import PolymorphicMPTTParentModelAdmin, PolymorphicMPTTChildModelAdmin
 
-from models import Resource, CSE, APP, CONTAINER, CONTENTINSTANCE, SUBSCRIPTION, test, test1, test2
+from models import Resource, CSE, APP, CONTAINER, CONTENTINSTANCE, SUBSCRIPTION
+
+# ACTIONS
+# TODO add an action to build the existing tree on iotdm
+
 
 # Register your models here.
-
-'''
-# The common admin functionality for all derived models:
-
-class BaseChildAdmin(PolymorphicMPTTChildModelAdmin):
-    GENERAL_FIELDSET = (None, {
-        'fields': ('parent', 'name'),
-    })
-
-    base_model = test
-    base_fieldsets = (
-        GENERAL_FIELDSET,
-    )
-
-
-# Optionally some custom admin code
-
-class TextNodeAdmin(BaseChildAdmin):
-    pass
-
-
-# Create the parent admin that combines it all:
-
-class TreeNodeParentAdmin(PolymorphicMPTTParentModelAdmin):
-    base_model = test
-    child_models = (
-        (test1, BaseChildAdmin),
-        (test2, TextNodeAdmin),  # custom admin allows custom edit/delete view.
-    )
-
-    list_display = ('name', 'actions_column',)
-
-    class Media:
-        css = {
-            'all': ('admin/treenode/admin.css',)
-        }
-
-class ResourceAdmin(PolymorphicMPTTChildModelAdmin):
-    GENERAL_FIELDSET = ('Mandatory', {
-        'fields': ['resourceType','name','parent'],
-    })
-
-    base_model = Resource
-    base_fieldsets = (
-        GENERAL_FIELDSET,
-    )
-'''
+# TODO create a button in the admi panel to re-build the tree ( for r in Resource.objects.all(): r.save() )
+# TODO Show what kind of resource is every tree entry in the admin panel (NAME / TYPE / ACTIONS)
 
 class CommonAdmin(PolymorphicMPTTChildModelAdmin):
     base_model = Resource
     readonly_fields = ['resourceType']
     mandatory_fields = ['resourceType','name','parent']
+    # This method allows to sear for the parent in the change_list tree (opened as a popup)
+    raw_id_fields = ['parent',]
+    # Allow saving a given resource as another one
+    save_as = True
+    save_as_continue = False
+
+    search_fields = ['name',]
+
     def __init__(self, *args, **kwargs):
         super(CommonAdmin, self).__init__(*args, **kwargs)
         self.list_of_fields = self.get_fields(self)#[f.name for f in APP._meta.get_fields()]#
@@ -68,6 +35,12 @@ class CommonAdmin(PolymorphicMPTTChildModelAdmin):
                 'classes': ['collapse', 'bold'],
                 'fields': optional_fields}],
         ]
+    # Here you can add read only fields for existing objects you want to update
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            # TODO add all fields that cannot be updated on IoTdm
+            return self.readonly_fields + ['name']
+        return self.readonly_fields
 
 
 class CSEAdmin(CommonAdmin):
@@ -79,7 +52,6 @@ class AppAdmin(CommonAdmin):
     base_model = APP
     mandatory_fields = ['resourceType','name','requestReachability','parent']
 
-
 class CntAdmin(CommonAdmin):
     base_model = CONTAINER
     mandatory_fields = ['resourceType','name','parent']
@@ -87,7 +59,7 @@ class CntAdmin(CommonAdmin):
 
 class CinAdmin(CommonAdmin):
     base_model = CONTENTINSTANCE
-    exclude = ['resourceID']
+    # exclude = ['resourceID']
     mandatory_fields = ['resourceType','name','content','parent']
 
 class SubAdmin(CommonAdmin):
@@ -96,24 +68,32 @@ class SubAdmin(CommonAdmin):
 
 
 class CombinedAdmin(PolymorphicMPTTParentModelAdmin):
+
+    # To define/disable actions dropdown menu
+    actions = None
+
     base_model = Resource
     child_models = (
         (CSE, CSEAdmin),
         (APP, AppAdmin),
-        (CONTAINER, CntAdmin), #TODO fix filtering by container. Now it raises a ValueError (not in depth-first order)
+        (CONTAINER, CntAdmin),
         (SUBSCRIPTION, SubAdmin),
         (CONTENTINSTANCE, CinAdmin),# custom admin allows custom edit/delete view.
     )
 
-    list_display = ('name','actions_column',)
+    list_display = ('name', 'actions_column')
+
+    def test(self, node):
+        return 'Fuck'
 
     class Media:
         css = {
-            'all': ('admin/treenode/admin.css', 'resources/tree.css'),
+            'all': ('admin/treenode/admin.css',
+                    'resources/tree.css'),
         }
-        js = ('https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js',
-              'resources/view_tree.js',
-        )
+        # js = ('https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js',
+        #       'resources/view_tree.js',
+        # )
 
 admin.site.register(Resource, CombinedAdmin)
 # admin.site.register(test, TreeNodeParentAdmin)

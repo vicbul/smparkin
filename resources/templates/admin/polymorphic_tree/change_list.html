@@ -1,0 +1,36 @@
+{% extends "admin/polymorphic_tree/change_list.html" %}
+{% load staticfiles mptt_tags %}
+
+{% block pagination %}
+    {{ block.super }}
+    <h1>Resources tree graph:</h1>
+    <link rel="stylesheet" media="screen, projection" href="{% static 'resources/tree.css' %}" />
+    <div class="row" id=resources_tree>
+        <div class="col-xs-12">
+            <div class="text-center" style="width:100%;font-size:65%">
+                <div class="text-left" style="display:inline-block">
+                    <div class="tree">
+                        <ul>
+                        <!--cl.queryset contains the list of nodes (resources). recursetree loop across all nodes.-->
+                        {% recursetree cl.queryset %}
+                            <li>
+                                <!--adding links to change view for each node-->
+                                <a href="{{ node.id }}/change/" id="{{ node.id }}">
+                                    {{ node.name }}
+                                    <div id="displayzone_{{ node.id }}" class="displayzone"></div>
+                                </a>
+                                {% if not node.is_leaf_node %}
+                                    <ul>
+                                        {{ children }}
+                                    </ul>
+                                {% endif %}
+                            </li>
+                        {% endrecursetree %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

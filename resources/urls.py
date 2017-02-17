@@ -3,6 +3,7 @@ from django.views.generic.base import TemplateView
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, Http404
 from resources.models import *
+from rest_framework.urlpatterns import format_suffix_patterns
 from SmartParking import settings
 from resources.signals.handlers import parse_date
 
@@ -30,6 +31,7 @@ iotdm_to_model = {
 @csrf_exempt
 def iotdm_django_sync(response):
     print 'Test function response', response.body
+    # TODO for IoTdm connection try django.utils.six.BytesIO and rest_framework.parsers import JSONParser
     response_dict = eval(response.body)
     resource_uri = response_dict['nev']['rep']['rn']
     path_split = resource_uri.rsplit('/',1)
@@ -132,5 +134,7 @@ def iotdm_django_sync(response):
 urlpatterns = [
     # url(r'^$', views.subscription, name='subs'),
     url(r'^structure', TemplateView.as_view(template_name='resources/home.html'), name='home'),
-    url(r'^iotdm', iotdm_django_sync)#views.MyView.as_view(), name='my-view')
+    url(r'^iotdm', iotdm_django_sync),#views.MyView.as_view(), name='my-view')
+    url(r'^full_resource_tree', views.ResouceTree.as_view()),
+    url(r'^status', views.Status.as_view()),
 ]

@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.db.models import Model
 from polymorphic_tree.models import PolymorphicMPTTModel, PolymorphicTreeForeignKey
 from django.core.exceptions import ValidationError
 from SmartParking import settings
@@ -80,6 +81,7 @@ class Resource(PolymorphicMPTTModel):
     class MPTTMeta:
         order_insertion_by = ['name']
 
+
 class CSE(Resource):
     #cseType = models.CharField(max_length=200, blank=True)
     resourceType = models.IntegerField(default=5, blank=False)
@@ -127,6 +129,7 @@ class APP(Resource):
             if check_parent.find('error') != -1:
                 raise ValidationError('Resource parent cannot be found on IoTdm.')
 
+
 class CONTAINER(Resource):
     resourceType = models.IntegerField(default=3, blank=False)
     # parent_resource = models.ForeignKey(Resource, on_delete=models.CASCADE, related_name='Parent Resource', default=1)
@@ -164,6 +167,7 @@ class CONTENTINSTANCE(Resource):
             if check_parent.find('error') != -1:
                 raise ValidationError('Resource parent cannot be found on IoTdm.')
 
+
 class SUBSCRIPTION(Resource):
     resourceType = models.IntegerField(default=23, blank=False)
     notificationURI = models.CharField(max_length=2000, blank=False, default='["http://localhost:8000/admin/resources/iotdm"]')#"http://localhost:8586")
@@ -183,3 +187,21 @@ class SUBSCRIPTION(Resource):
             if check_parent.find('error') != -1:
                 raise ValidationError('Resource parent cannot be found on IoTdm.')
 
+
+class Status(Model):
+    time = models.DateTimeField(blank=True)
+    lati = models.FloatField(max_length=100, blank=True)
+    long = models.FloatField(max_length=100, blank=True)
+    alti = models.FloatField(max_length=100, blank=True)
+    rxnb = models.FloatField(max_length=100, blank=True)
+    rxok = models.FloatField(max_length=100, blank=True)
+    rxfw = models.FloatField(max_length=100, blank=True)
+    ackr = models.FloatField(max_length=100, blank=True)
+    dwnb = models.FloatField(max_length=100, blank=True)
+    txnb = models.FloatField(max_length=100, blank=True)
+
+    class Meta:
+        verbose_name_plural = 'Statuses'
+
+    def __str__(self):
+        return str(self.id)

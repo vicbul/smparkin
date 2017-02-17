@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.views.generic import View
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import status
 from models import *
 from serializers import ResourceSerializer, StatusSerializer
 
@@ -26,7 +27,7 @@ class ResouceTree(APIView):
 
 class Status(APIView):
 
-    def get(self, request):
+    def get(self, request, format=None):
         resources = CONTENTINSTANCE.objects.all().order_by('creationTime')
         # Filtering only the last content instances
         parents = []
@@ -41,8 +42,13 @@ class Status(APIView):
         serializer = StatusSerializer(last_content, many=True)
         return Response(serializer.data)
 
-    def post(self):
-        pass
+    def post(self, request, format=None):
+        print 'request', request.data
+        serializer = StatusSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # View to display get or post data
 # class MyView(View):

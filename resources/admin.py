@@ -1,7 +1,8 @@
 from django.contrib import admin
+from django.contrib.admin import ModelAdmin
 from polymorphic_tree.admin import PolymorphicMPTTParentModelAdmin, PolymorphicMPTTChildModelAdmin
 
-from models import Resource, CSE, APP, CONTAINER, CONTENTINSTANCE, SUBSCRIPTION
+from models import *
 
 # ACTIONS
 # TODO add an action to build the existing tree on iotdm
@@ -52,6 +53,7 @@ class AppAdmin(CommonAdmin):
     base_model = APP
     mandatory_fields = ['resourceType','name','requestReachability','parent']
 
+
 class CntAdmin(CommonAdmin):
     base_model = CONTAINER
     mandatory_fields = ['resourceType','name','parent']
@@ -61,6 +63,7 @@ class CinAdmin(CommonAdmin):
     base_model = CONTENTINSTANCE
     # exclude = ['resourceID']
     mandatory_fields = ['resourceType','name','content','parent']
+
 
 class SubAdmin(CommonAdmin):
     base_model = SUBSCRIPTION
@@ -95,7 +98,12 @@ class CombinedAdmin(PolymorphicMPTTParentModelAdmin):
         #       'resources/view_tree.js',
         # )
 
+
+class StatusAdmin(ModelAdmin):
+    list_display = ["time","lati","long","alti","rxnb","rxok","rxfw","ackr","dwnb","txnb"]
+
 admin.site.register(Resource, CombinedAdmin)
+admin.site.register(Status, StatusAdmin)
 # admin.site.register(test, TreeNodeParentAdmin)
 
 

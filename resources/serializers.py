@@ -11,5 +11,5 @@ class ResourceSerializer(serializers.ModelSerializer):
 class StatusSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = CONTENTINSTANCE
-        fields = ['id', 'name', 'parent', 'level','creationTime', 'content']
+        model = Status
+        fields = ["time","lati","long","alti","rxnb","rxok","rxfw","ackr","dwnb","txnb"]

@@ -8,5 +8,9 @@ sock.bind((UDP_IP, UDP_PORT))
 
 while True:
     data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes
+    try:
+        clean_data = eval('{"stat":'+data.rsplit('{"stat":')[1])
+    except:
+        clean_data = {'stat':'No data from sensors.'}
     print 'Address:', addr
-    print "received message:", data
+    print "received message:", clean_data['stat']

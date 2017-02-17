@@ -1,11 +1,11 @@
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import cgi
-from SmartParking import settings
+# from ../SmartParking import settings
 import json, sys, ast
 from cStringIO import StringIO
 
-if settings.CHECK_IOTDM_RESPONSE is True:
-    from iotdm import iotdm_api
+#if settings.CHECK_IOTDM_RESPONSE is True:
+#    from iotdm import iotdm_api
 
 class MyBaseHTTPRequestHandler (BaseHTTPRequestHandler):
     def do_GET(self):

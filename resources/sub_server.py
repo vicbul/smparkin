@@ -10,7 +10,7 @@ if settings.CHECK_IOTDM_RESPONSE is True:
 class MyBaseHTTPRequestHandler (BaseHTTPRequestHandler):
     def do_GET(self):
         print 'GET request.'
-        self.send_response(200)
+        self.send_response(200,'Request successfull.')
         self.send_header('Content-type','application/json')
         self.end_headers()
         self.wfile.write('Conected to server.')

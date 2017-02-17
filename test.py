@@ -14,3 +14,6 @@ y = '{"sur":"/makazmie/django_sub","nev":{"rep":{"m2m:cnt":{"ct":"20170204T10303
 e = '{"error":"Resource target URI not found: /makazmie/test"}'
 ae = '{"m2m:ae":{"rr":true,"ct":"20170205T151954","poa":[""],"aei":"testapp","ty":2,"ri":"7","lt":"20170205T151954","pi":"/makazmie/2","api":"","rn":"testapp","apn":"","et":"29991231T111111"}}'
 
+test = 'XXXXXXXXX{"stat":{"time":"2017-02-16 20:02:16 CET","lati":50.04372,"long":19.96764,"alti":20,"rxnb":0,"rxok":0,"rxfw":0,"ackr":0.0,"dwnb":0,"txnb":0}}'
+
+print test.rsplit('{"',1)[1]

@@ -1,11 +1,11 @@
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import cgi
-from SmartParking import settings
+# from ../SmartParking import settings
 import json, sys, ast
 from cStringIO import StringIO
 
-if settings.CHECK_IOTDM_RESPONSE is True:
-    from iotdm import iotdm_api
+#if settings.CHECK_IOTDM_RESPONSE is True:
+#    from iotdm import iotdm_api
 
 class MyBaseHTTPRequestHandler (BaseHTTPRequestHandler):
     def do_GET(self):
@@ -38,7 +38,7 @@ class MyBaseHTTPRequestHandler (BaseHTTPRequestHandler):
 
 
 def run(server_class=HTTPServer, handler_class=MyBaseHTTPRequestHandler):
-    server_address = ('localhost', 8586)
+    server_address = ('0.0.0.0', 8586)
     httpd = server_class(server_address, handler_class)
     httpd.serve_forever()
     return httpd

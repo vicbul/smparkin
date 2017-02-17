@@ -38,7 +38,7 @@ class MyBaseHTTPRequestHandler (BaseHTTPRequestHandler):
 
 
 def run(server_class=HTTPServer, handler_class=MyBaseHTTPRequestHandler):
-    server_address = ('localhost', 8586)
+    server_address = ('0.0.0.0', 8586)
     httpd = server_class(server_address, handler_class)
     httpd.serve_forever()
     return httpd

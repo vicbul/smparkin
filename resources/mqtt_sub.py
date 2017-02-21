@@ -3,6 +3,7 @@ from SmartParking import settings
 import json, requests
 
 def on_connect(client, userdata, rc):
+    print 'Subscriving to MQTT...'
     client.subscribe("gateway/#")
 
 def on_message(client, userdata, msg):
@@ -11,7 +12,7 @@ def on_message(client, userdata, msg):
     json_msg = json.loads(msg.payload)
 
     # Sending data in json format to django rest API
-    r = requests.post('http://localhost:8000/admin/resources/mqttsub/', json_msg)
+    r = requests.post('http://localhost:8000/resources/mqttsub/', json_msg)
 
 client = mqtt.Client()
 client.on_connect = on_connect

@@ -25,10 +25,12 @@ class ResouceTree(APIView):
     def post(self):
         pass
 
-class MQTTSubscription(APIView):
+class MQTTSub(APIView):
 
     def get(self, request, format=None):
-        pass
+        resources = MQTTSubscription.objects.all()
+        serializer = MQTTSerializer(resources, many=True)
+        return Response(serializer.data)
 
     def post(self, request, format=None):
         print 'Post request received:', request.data

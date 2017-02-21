@@ -72,6 +72,10 @@ class Resource(PolymorphicMPTTModel):
             except Exception, e:
                 raise ValidationError('Cannot connect to IoTdm: '+str(e))
 
+    # This method returns the polymorphic_ctype_id in string mode so it can be compared with ct_id param sent by filters in changelist
+    def polymorphic_ctype_str_id(self):
+        return str(self.polymorphic_ctype_id)
+
     def __str__(self):
         return self.name
 
@@ -187,21 +191,38 @@ class SUBSCRIPTION(Resource):
             if check_parent.find('error') != -1:
                 raise ValidationError('Resource parent cannot be found on IoTdm.')
 
-
-class Status(Model):
+class MQTTSubscription(Model):
+    mac = models.CharField(max_length=200, blank=True)
     time = models.DateTimeField(blank=True)
-    lati = models.FloatField(max_length=100, blank=True)
-    long = models.FloatField(max_length=100, blank=True)
-    alti = models.FloatField(max_length=100, blank=True)
-    rxnb = models.FloatField(max_length=100, blank=True)
-    rxok = models.FloatField(max_length=100, blank=True)
-    rxfw = models.FloatField(max_length=100, blank=True)
-    ackr = models.FloatField(max_length=100, blank=True)
-    dwnb = models.FloatField(max_length=100, blank=True)
-    txnb = models.FloatField(max_length=100, blank=True)
+    latitude = models.FloatField(max_length=100, blank=True)
+    longitude = models.FloatField(max_length=100, blank=True)
+    altitude = models.FloatField(max_length=100, blank=True)
+    rxPacketsReceived = models.FloatField(max_length=100, blank=True)
+    rxPacketsReceivedOK = models.FloatField(max_length=100, blank=True)
+    txPacketsReceived = models.FloatField(max_length=100, blank=True)
+    txPacketsEmitted = models.FloatField(max_length=100, blank=True)
+    customData = models.FloatField(max_length=100, blank=True, null=True)
 
     class Meta:
-        verbose_name_plural = 'Statuses'
+        verbose_name_plural = 'MQTT Subscription'
 
     def __str__(self):
         return str(self.id)
+
+# class Status(Model):
+#     time = models.DateTimeField(blank=True)
+#     lati = models.FloatField(max_length=100, blank=True)
+#     long = models.FloatField(max_length=100, blank=True)
+#     alti = models.FloatField(max_length=100, blank=True)
+#     rxnb = models.FloatField(max_length=100, blank=True)
+#     rxok = models.FloatField(max_length=100, blank=True)
+#     rxfw = models.FloatField(max_length=100, blank=True)
+#     ackr = models.FloatField(max_length=100, blank=True)
+#     dwnb = models.FloatField(max_length=100, blank=True)
+#     txnb = models.FloatField(max_length=100, blank=True)
+#
+#     class Meta:
+#         verbose_name_plural = 'Statuses'
+#
+#     def __str__(self):
+#         return str(self.id)

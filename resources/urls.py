@@ -136,5 +136,6 @@ urlpatterns = [
     url(r'^structure', TemplateView.as_view(template_name='resources/home.html'), name='home'),
     url(r'^iotdm', iotdm_django_sync),#views.MyView.as_view(), name='my-view')
     url(r'^full_resource_tree', views.ResouceTree.as_view()),
-    url(r'^status', views.Status.as_view()),
+    # url(r'^status', views.Status.as_view()),
+    url(r'^mqttsub', views.MQTTSubscription.as_view())
 ]

@@ -15,8 +15,8 @@
                         {% recursetree cl.queryset %}
                             <li>
                                 <!--adding links to change view for each node-->
-                                <a href="{{ node.id }}/change/" id="{{ node.id }}">
-                                    {{ node.name }}
+                                <a href="{{ node.id }}/change/" id=myFunction({{ node.id }})>
+                                    {{ node.name }} {{ node.ctype_to_int }}
                                     <div id="displayzone_{{ node.id }}" class="displayzone"></div>
                                 </a>
                                 {% if not node.is_leaf_node %}

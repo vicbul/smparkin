@@ -71,7 +71,6 @@ class SubAdmin(CommonAdmin):
 
 
 class CombinedAdmin(PolymorphicMPTTParentModelAdmin):
-
     # To define/disable actions dropdown menu
     actions = None
 
@@ -86,9 +85,6 @@ class CombinedAdmin(PolymorphicMPTTParentModelAdmin):
 
     list_display = ('name', 'actions_column')
 
-    def test(self, node):
-        return 'Fuck'
-
     class Media:
         css = {
             'all': ('admin/treenode/admin.css',
@@ -99,11 +95,14 @@ class CombinedAdmin(PolymorphicMPTTParentModelAdmin):
         # )
 
 
-class StatusAdmin(ModelAdmin):
-    list_display = ["time","lati","long","alti","rxnb","rxok","rxfw","ackr","dwnb","txnb"]
+class MQTTSubAdmin(ModelAdmin):
+    list_display = ["mac","time","latitude","longitude","altitude","rxPacketsReceived","rxPacketsReceivedOK","txPacketsReceived","txPacketsEmitted","customData"]
+
+# class StatusAdmin(ModelAdmin):
+#     list_display = ["time","lati","long","alti","rxnb","rxok","rxfw","ackr","dwnb","txnb"]
 
 admin.site.register(Resource, CombinedAdmin)
-admin.site.register(Status, StatusAdmin)
+admin.site.register(MQTTSubscription, MQTTSubAdmin)
 # admin.site.register(test, TreeNodeParentAdmin)
 
 

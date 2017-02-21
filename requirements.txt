@@ -3,6 +3,8 @@ django-mptt
 django-polymorphic
 django-polymorphic_tree
 requests
+paho-mqtt
+json
 PyMySQL
 djangorestframework
 virtualenv

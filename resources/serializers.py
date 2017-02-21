@@ -8,8 +8,14 @@ class ResourceSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'parent', 'level']#'__all__'
         # depth = 0
 
-class StatusSerializer(serializers.ModelSerializer):
+class MQTTSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Status
-        fields = ["time","lati","long","alti","rxnb","rxok","rxfw","ackr","dwnb","txnb"]
+        model = MQTTSubscription
+        fields = ["mac","time","latitude","longitude","altitude","rxPacketsReceived","rxPacketsReceivedOK","txPacketsReceived","txPacketsEmitted","customData"]
+
+# class StatusSerializer(serializers.ModelSerializer):
+#
+#     class Meta:
+#         model = Status
+#         fields = ["time","lati","long","alti","rxnb","rxok","rxfw","ackr","dwnb","txnb"]

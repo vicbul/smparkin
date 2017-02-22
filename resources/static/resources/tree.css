@@ -104,3 +104,7 @@ right connector from last child*/
 	min-width:3em;
 	font-size:75% !important;
 }
+/* This uplight the tree nodes that match the changelist filter applied */
+#resources_tree li a.nodeTypeFilter {
+    background: #c8e4f8; color: #000; border: 1px solid #94a0b4;
+    /* color: white; */

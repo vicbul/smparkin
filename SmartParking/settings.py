@@ -158,6 +158,15 @@ STATIC_URL = '/static/'
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 
+#PROXIES
+PROXIES = {
+    'http' : os.environ.get('http_proxy'),
+    'https' : os.environ.get('https_proxy'),
+    'ftp' : os.environ.get('ftp_proxy'),
+    'socks' : os.environ.get('socks_proxy'),
+}
+CHECK_PROXIES = True
+
 # MQTT Broker
 MQTT_IP = "10.48.18.34"
 MQTT_PORT = 8587

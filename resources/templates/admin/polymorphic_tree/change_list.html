@@ -12,11 +12,15 @@
                     <div class="tree">
                         <ul>
                         <!--cl.queryset contains the list of nodes (resources). recursetree loop across all nodes.-->
-                        {% recursetree cl.queryset %}
+                        {% recursetree cl.root_queryset %}
                             <li>
                                 <!--adding links to change view for each node-->
-                                <a href="{{ node.id }}/change/" id=myFunction({{ node.id }})>
-                                    {{ node.name }} {{ node.ctype_to_int }}
+                                <a href="{{ node.id }}/change/" id="{{ node.id }}"
+                                        {# If the node type match the filter node type being applied it add a class for css #}
+                                        {% if node.polymorphic_ctype_str_id == cl.params.ct_id %}
+                                            class="nodeTypeFilter"
+                                        {% endif %}>
+                                    {{ node.name }}
                                     <div id="displayzone_{{ node.id }}" class="displayzone"></div>
                                 </a>
                                 {% if not node.is_leaf_node %}

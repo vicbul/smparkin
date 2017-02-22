@@ -1,6 +1,9 @@
 import paho.mqtt.client as mqtt
 from SmartParking import settings
-import json, requests
+import json, requests, os
+
+os.environ['http_proxy']=''
+os.environ['https_proxy']=''
 
 def on_connect(client, userdata, rc):
     print 'Subscriving to MQTT...'

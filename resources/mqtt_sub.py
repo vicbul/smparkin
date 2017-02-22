@@ -17,6 +17,8 @@ def on_message(client, userdata, msg):
     # Sending data in json format to django rest API
     r = requests.post('http://localhost:8000/resources/mqttsub/', json_msg)
 
+    print r.text
+
 client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message

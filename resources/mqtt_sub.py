@@ -15,7 +15,7 @@ def on_message(client, userdata, msg):
     print 'Payload:', msg.payload
     json_msg = json.loads(msg.payload)
 
-    # Sending data in json format to django rest API
+    # Sending data in json format to django rest API. Splitting between stats and rxinfo
     if msg.topic.find('/stats') != -1:
         r = requests.post('http://localhost:8000/resources/gateway_stats/', json=json_msg)
     elif msg.topic.find('/rx') != -1:

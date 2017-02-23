@@ -25,17 +25,33 @@ class ResouceTree(APIView):
     def post(self):
         pass
 
-class MQTTSub(APIView):
+class GatewayStatsView(APIView):
 
     def get(self, request, format=None):
         print 'GET request received:', #request.data
-        resources = MQTTSubscription.objects.all()
-        serializer = MQTTSerializer(resources, many=True)
+        resources = GatewayStats.objects.all()
+        serializer = GatewayStatsSerializer(resources, many=True)
         return Response(serializer.data)
 
     def post(self, request, format=None):
         print 'POST request received:', #request.data
-        serializer = MQTTSerializer(data=request.data)
+        serializer = GatewayStatsSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class GatewayRxView(APIView):
+
+    def get(self, request, format=None):
+        print 'GET request received:', #request.data
+        resources = GatewayRx.objects.all()
+        serializer = GatewayRxSerializer(resources, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        print 'POST request received:', #request.data
+        serializer = GatewayRxSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)

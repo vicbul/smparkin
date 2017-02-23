@@ -17,7 +17,44 @@ ae = '{"m2m:ae":{"rr":true,"ct":"20170205T151954","poa":[""],"aei":"testapp","ty
 test = 'XXXXXXX{"stat":{"time":"2017-02-16 20:02:16 CET","lati":50.04372,"long":19.96764,"alti":20,"rxnb":0,"rxok":0,"rxfw":0,"ackr":0.0,"dwnb":0,"txnb":0}}'
 
 # x = requests.post('http://localhost:8000/resources/status',json=eval('{"stat":'+test.rsplit('{"stat":')[1].replace(' CET','')))
-d = {'b':'test'}
 
-if 'a' in d.keys():
-    print 'eyeyeye'
+v = "/blabla/asfdg/rx"
+
+print 'joder', re.findall("rx", v)
+
+
+Payload_stats = '''{"mac":"aa55c07bbc9e0ab0",
+                 "time":"2017-02-22T19:54:36+01:00",
+                 "latitude":50.04372,
+                 "longitude":19.96764,
+                 "altitude":20,
+                 "rxPacketsReceived":0,
+                 "rxPacketsReceivedOK":0,
+                 "txPacketsReceived":0,
+                 "txPacketsEmitted":0,
+                 "customData":null}'''
+
+Payload_rx = '''{"rxInfo":
+                  {"mac":"aa55c07bbc9e0ab0",
+                   "time":"0001-01-01T00:00:00Z",
+                   "timestamp":44761715,
+                   "frequency":868100000,
+                   "channel":0,
+                   "rfChain":0,
+                   "crcStatus":-1,
+                   "codeRate":"4/7",
+                   "rssi":-102,
+                   "loRaSNR":-10,
+                   "size":5,
+                   "dataRate":{"modulation":"LORA",
+                               "spreadFactor":7,
+                               "bandwidth":125}
+                   },
+              "phyPayload":"QAgHBgUAEgAD1E+aHI9SpIjP0+JqDZ7ZFJUnCw=="}'''
+
+x = json.loads(Payload_rx)
+
+print base64.b64decode(x['phyPayload'])
+
+print x
+

@@ -8,11 +8,17 @@ class ResourceSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'parent', 'level']#'__all__'
         # depth = 0
 
-class MQTTSerializer(serializers.ModelSerializer):
+class GatewayStatsSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = MQTTSubscription
+        model = GatewayStats
         fields = ["mac","time","latitude","longitude","altitude","rxPacketsReceived","rxPacketsReceivedOK","txPacketsReceived","txPacketsEmitted","customData"]
+
+class GatewayRxSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = GatewayRx
+        fields = ["rxInfo","phyPayload"]
 
 # class StatusSerializer(serializers.ModelSerializer):
 #

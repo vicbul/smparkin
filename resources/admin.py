@@ -95,14 +95,19 @@ class CombinedAdmin(PolymorphicMPTTParentModelAdmin):
         # )
 
 
-class MQTTSubAdmin(ModelAdmin):
+class GatewayStatsAdmin(ModelAdmin):
     list_display = ["mac","time","latitude","longitude","altitude","rxPacketsReceived","rxPacketsReceivedOK","txPacketsReceived","txPacketsEmitted","customData"]
+
+
+class GatewayRxAdmin(ModelAdmin):
+    list_display = ['date',"rxInfo","phyPayload"]
 
 # class StatusAdmin(ModelAdmin):
 #     list_display = ["time","lati","long","alti","rxnb","rxok","rxfw","ackr","dwnb","txnb"]
 
 admin.site.register(Resource, CombinedAdmin)
-admin.site.register(MQTTSubscription, MQTTSubAdmin)
+admin.site.register(GatewayStats, GatewayStatsAdmin)
+admin.site.register(GatewayRx, GatewayRxAdmin)
 # admin.site.register(test, TreeNodeParentAdmin)
 
 

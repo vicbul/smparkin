@@ -137,5 +137,6 @@ urlpatterns = [
     url(r'^iotdm', iotdm_django_sync),#views.MyView.as_view(), name='my-view')
     url(r'^full_resource_tree', views.ResouceTree.as_view()),
     # url(r'^status', views.Status.as_view()),
-    url(r'^mqttsub', views.MQTTSub.as_view())
+    url(r'^gateway_stats', views.GatewayStatsView.as_view()),
+    url(r'^gateway_rx', views.GatewayRxView.as_view())
 ]

@@ -4,8 +4,9 @@ from django.db import models
 from django.db.models import Model
 from polymorphic_tree.models import PolymorphicMPTTModel, PolymorphicTreeForeignKey
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 from SmartParking import settings
-import datetime, socket
+import datetime, socket, base64
 
 if settings.CHECK_IOTDM_RESPONSE is True:
     from iotdm import iotdm_api
@@ -191,7 +192,7 @@ class SUBSCRIPTION(Resource):
             if check_parent.find('error') != -1:
                 raise ValidationError('Resource parent cannot be found on IoTdm.')
 
-class MQTTSubscription(Model):
+class GatewayStats(Model):
     mac = models.CharField(max_length=200, blank=True)
     time = models.DateTimeField(blank=True)
     latitude = models.FloatField(max_length=100, blank=True)
@@ -204,7 +205,18 @@ class MQTTSubscription(Model):
     customData = models.FloatField(max_length=100, blank=True, null=True)
 
     class Meta:
-        verbose_name_plural = 'MQTT Subscription'
+        verbose_name_plural = 'Gateway Stats'
+
+    def __str__(self):
+        return str(self.id)
+
+class GatewayRx(Model):
+    date = models.DateTimeField(default=timezone.now)
+    rxInfo = models.CharField(max_length=1000, blank=True)
+    phyPayload = models.CharField(max_length=1000, blank=True)
+
+    class Meta:
+        verbose_name_plural = 'Gateway Rx'
 
     def __str__(self):
         return str(self.id)

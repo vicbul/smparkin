@@ -15,10 +15,11 @@ def on_message(client, userdata, msg):
     print 'Payload:', msg.payload
     json_msg = json.loads(msg.payload)
 
-    print 'rxPacketsReceived:', json_msg["rxPacketsReceived"]
-
     # Sending data in json format to django rest API
-    r = requests.post('http://localhost:8000/resources/mqttsub/', json=json_msg)
+    if msg.topic.find('/stats') != -1:
+        r = requests.post('http://localhost:8000/resources/gateway_stats/', json=json_msg)
+    elif msg.topic.find('/rx') != -1:
+        r = requests.post('http://localhost:8000/resources/gateway_rx/', json={"rxInfo": str(json_msg['rxInfo']), "phyPayload":str(json_msg['phyPayload'])})
 
 client = mqtt.Client()
 client.on_connect = on_connect

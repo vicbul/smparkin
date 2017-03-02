@@ -1,8 +1,8 @@
 from __future__ import unicode_literals
 
 from django.apps import AppConfig
-from SmartParking import settings
 from django.core.exceptions import ValidationError
+from SmartParking import settings
 
 
 import socket, time

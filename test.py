@@ -1,8 +1,10 @@
-import base64, ast, json, socket, re, requests
+import base64, ast, json, socket, re, requests, array
 from txthings import coap
 from ipaddress import ip_address
 from iotdm import iotdm_api
 from resources.references import shortToLongDict
+# from crypto.Cipher import AES
+from lora.crypto import loramac_decrypt
 
 x = 'AQIDBAUGBwgJCg=='
 y = base64.b64encode('esto es una prueba')
@@ -19,8 +21,6 @@ test = 'XXXXXXX{"stat":{"time":"2017-02-16 20:02:16 CET","lati":50.04372,"long":
 # x = requests.post('http://localhost:8000/resources/status',json=eval('{"stat":'+test.rsplit('{"stat":')[1].replace(' CET','')))
 
 v = "/blabla/asfdg/rx"
-
-print 'joder', re.findall("rx", v)
 
 
 Payload_stats = '''{"mac":"aa55c07bbc9e0ab0",
@@ -52,9 +52,24 @@ Payload_rx = '''{"rxInfo":
                    },
               "phyPayload":"QAgHBgUAEgAD1E+aHI9SpIjP0+JqDZ7ZFJUnCw=="}'''
 
-x = json.loads(Payload_rx)
+x = '6001320'
 
-print base64.b64decode(x['phyPayload'])
+x_b64enc = base64.b64encode(x)
+# print x_b64enc
+x_b64dec = base64.b64decode(x_b64enc)
+# print x_b64dec
 
-print x
+devEUI = '0002020800000000'
+
+appkey = '000102030405060708090A0B0C0D0E0F'
+ntw_key = '01020304050607080910111213141516'
+
+
+from lora.crypto import loramac_decrypt
+payload = '01F1209DD127B480D317C16063834B'
+sequence_counter = 2
+key = appkey
+dev_addr = '02280000'
+output = loramac_decrypt(payload, sequence_counter, key, dev_addr)
+print ''.join('{:02x}'.format(x) for x in output)
 

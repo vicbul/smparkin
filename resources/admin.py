@@ -97,6 +97,7 @@ class CombinedAdmin(PolymorphicMPTTParentModelAdmin):
 
 class GatewayStatsAdmin(ModelAdmin):
     list_display = ["mac","time","latitude","longitude","altitude","rxPacketsReceived","rxPacketsReceivedOK","txPacketsReceived","txPacketsEmitted","customData"]
+    list_per_page = 500
 
 
 class GatewayRxAdmin(ModelAdmin):

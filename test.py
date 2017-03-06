@@ -1,4 +1,4 @@
-import base64, ast, json, socket, re, requests, array
+import base64, ast, json, socket, re, requests, array, binascii
 from txthings import coap
 from ipaddress import ip_address
 from iotdm import iotdm_api
@@ -52,24 +52,11 @@ Payload_rx = '''{"rxInfo":
                    },
               "phyPayload":"QAgHBgUAEgAD1E+aHI9SpIjP0+JqDZ7ZFJUnCw=="}'''
 
-x = '6001320'
+dataenc = base64.b64decode('AQIDBAUGBwgJCg==')
 
-x_b64enc = base64.b64encode(x)
-# print x_b64enc
-x_b64dec = base64.b64decode(x_b64enc)
-# print x_b64dec
+data = '\x01\x02\x03\x04\x05\x06\x07\x08\t\n'
 
-devEUI = '0002020800000000'
+dataend = binascii.hexlify(data).upper()
 
-appkey = '000102030405060708090A0B0C0D0E0F'
-ntw_key = '01020304050607080910111213141516'
-
-
-from lora.crypto import loramac_decrypt
-payload = '01F1209DD127B480D317C16063834B'
-sequence_counter = 2
-key = appkey
-dev_addr = '02280000'
-output = loramac_decrypt(payload, sequence_counter, key, dev_addr)
-print ''.join('{:02x}'.format(x) for x in output)
-
+print 'data',dataend
+print data.encode('utf-8')

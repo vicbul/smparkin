@@ -221,6 +221,18 @@ class GatewayRx(Model):
     def __str__(self):
         return str(self.id)
 
+class AppData(Model):
+    date = models.DateTimeField(default=timezone.now)
+    devEUI = models.CharField(max_length=1000, blank=True)
+    data = models.CharField(max_length=1000, blank=True)
+    data_decoded = models.CharField(max_length=1000, blank=True)
+
+    class Meta:
+        verbose_name_plural = 'App Data'
+
+    def __str__(self):
+        return str(self.id)
+
 # class Status(Model):
 #     time = models.DateTimeField(blank=True)
 #     lati = models.FloatField(max_length=100, blank=True)

@@ -57,6 +57,22 @@ class GatewayRxView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class AppDataView(APIView):
+
+    def get(self, request, format=None):
+        print 'GET request received:', #request.data
+        resources = AppData.objects.all()
+        serializer = AppDataSerializer(resources, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        print 'POST request received:', #request.data
+        serializer = AppDataSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 # class Status(APIView):
 #
 #     def get(self, request, format=None):

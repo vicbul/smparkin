@@ -138,5 +138,6 @@ urlpatterns = [
     url(r'^full_resource_tree', views.ResouceTree.as_view()),
     # url(r'^status', views.Status.as_view()),
     url(r'^gateway_stats', views.GatewayStatsView.as_view()),
-    url(r'^gateway_rx', views.GatewayRxView.as_view())
+    url(r'^gateway_rx', views.GatewayRxView.as_view()),
+    url(r'^app_data', views.AppDataView.as_view()),
 ]

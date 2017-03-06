@@ -103,12 +103,17 @@ class GatewayStatsAdmin(ModelAdmin):
 class GatewayRxAdmin(ModelAdmin):
     list_display = ['date',"rxInfo","phyPayload"]
 
+
+class AppDataAdmin(ModelAdmin):
+    list_display = ['date','devEUI',"data","data_decoded"]
+
 # class StatusAdmin(ModelAdmin):
 #     list_display = ["time","lati","long","alti","rxnb","rxok","rxfw","ackr","dwnb","txnb"]
 
 admin.site.register(Resource, CombinedAdmin)
 admin.site.register(GatewayStats, GatewayStatsAdmin)
 admin.site.register(GatewayRx, GatewayRxAdmin)
+admin.site.register(AppData, AppDataAdmin)
 # admin.site.register(test, TreeNodeParentAdmin)
 
 

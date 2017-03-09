@@ -105,7 +105,7 @@ class GatewayRxAdmin(ModelAdmin):
 
 
 class AppDataAdmin(ModelAdmin):
-    list_display = ["applicationID","applicationName","nodeName","devEUI","data", "data_decoded"]
+    list_display = ["date","applicationID","applicationName","nodeName","devEUI","data", "data_decoded"]
 
 # class StatusAdmin(ModelAdmin):
 #     list_display = ["time","lati","long","alti","rxnb","rxok","rxfw","ackr","dwnb","txnb"]

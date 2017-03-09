@@ -52,11 +52,31 @@ Payload_rx = '''{"rxInfo":
                    },
               "phyPayload":"QAgHBgUAEgAD1E+aHI9SpIjP0+JqDZ7ZFJUnCw=="}'''
 
-dataenc = base64.b64decode('AQIDBAUGBwgJCg==')
-
-data = '\x01\x02\x03\x04\x05\x06\x07\x08\t\n'
-
-dataend = binascii.hexlify(data).upper()
-
-print 'data',dataend
-print data.encode('utf-8')
+payload_decripted = '''
+                        {
+                          "applicationID": "1",
+                          "applicationName": "smparking",
+                          "nodeName": "test_sensor_1",
+                          "devEUI": "0002020800000000",
+                          "rxInfo": [
+                            {
+                              "mac": "aa55c07bbc9e0ab0",
+                              "rssi": -65,
+                              "loRaSNR": 10.2
+                            }
+                          ],
+                          "txInfo": {
+                            "frequency": 868300000,
+                            "dataRate": {
+                              "modulation": "LORA",
+                              "bandwidth": 125,
+                              "spreadFactor": 7
+                            },
+                            "adr": true,
+                            "codeRate": "4/5"
+                          },
+                          "fCnt": 92,
+                          "fPort": 1,
+                          "data": "AQIDBAUGBwgJCg=="
+                        }
+                    '''

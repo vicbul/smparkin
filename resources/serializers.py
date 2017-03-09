@@ -24,7 +24,7 @@ class AppDataSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AppData
-        fields = ["devEUI","data", "data_decoded"]
+        fields = ["applicationID","applicationName","nodeName","devEUI","data", "data_decoded"]
 
 # class StatusSerializer(serializers.ModelSerializer):
 #

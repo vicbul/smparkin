@@ -223,6 +223,9 @@ class GatewayRx(Model):
 
 class AppData(Model):
     date = models.DateTimeField(default=timezone.now)
+    applicationID = models.CharField(max_length=1000, blank=True)
+    applicationName = models.CharField(max_length=1000, blank=True)
+    nodeName = models.CharField(max_length=1000, blank=True)
     devEUI = models.CharField(max_length=1000, blank=True)
     data = models.CharField(max_length=1000, blank=True)
     data_decoded = models.CharField(max_length=1000, blank=True)

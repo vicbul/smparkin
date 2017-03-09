@@ -22,12 +22,21 @@ def on_message(client, userdata, msg):
         if msg.topic.find('/stats') != -1:
             r = requests.post('http://localhost:8000/resources/gateway_stats/', json=json_msg)
         elif msg.topic.find('/rx') != -1:
-            r = requests.post('http://localhost:8000/resources/gateway_rx/', json={"rxInfo": str(json_msg['rxInfo']), "phyPayload":str(json_msg['phyPayload'])})
+            r = requests.post('http://localhost:8000/resources/gateway_rx/',
+                              json={
+                                  "rxInfo": str(json_msg['rxInfo']),
+                                  "phyPayload":str(json_msg['phyPayload'])
+                              })
     elif msg.topic.find('application') != -1:
-        r = requests.post('http://localhost:8000/resources/app_data/', json={"devEUI": str(json_msg['devEUI']),
-                                                                             "data":str(json_msg['data']),
-                                                                             "data_decoded":binascii.hexlify(base64.b64decode(json_msg['data'])),
-                                                                             })
+        r = requests.post('http://localhost:8000/resources/app_data/',
+                          json={
+                                 "applicationID": str(json_msg['applicationID']),
+                                 "applicationName": str(json_msg['applicationName']),
+                                 "nodeName": str(json_msg['nodeName']),
+                                 "devEUI": str(json_msg['devEUI']),
+                                 "data":str(json_msg['data']),
+                                 "data_decoded":binascii.hexlify(base64.b64decode(json_msg['data'])),
+                            })
         print 'data_decoded', binascii.hexlify(base64.b64decode(json_msg['data']))
 
 client = mqtt.Client()

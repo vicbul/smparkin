@@ -1,4 +1,5 @@
-import base64, ast, json, socket, re, requests, array, binascii
+import base64, ast, json, socket, re, requests, array, binascii, datetime
+from django.utils import timezone
 from txthings import coap
 from ipaddress import ip_address
 from iotdm import iotdm_api
@@ -52,31 +53,34 @@ Payload_rx = '''{"rxInfo":
                    },
               "phyPayload":"QAgHBgUAEgAD1E+aHI9SpIjP0+JqDZ7ZFJUnCw=="}'''
 
-payload_decripted = '''
+payload_decripted = '''{
+                      "applicationID": "1",
+                      "applicationName": "smparking",
+                      "nodeName": "test_sensor_1",
+                      "devEUI": "0002020800000000",
+                      "rxInfo": [
                         {
-                          "applicationID": "1",
-                          "applicationName": "smparking",
-                          "nodeName": "test_sensor_1",
-                          "devEUI": "0002020800000000",
-                          "rxInfo": [
-                            {
-                              "mac": "aa55c07bbc9e0ab0",
-                              "rssi": -65,
-                              "loRaSNR": 10.2
-                            }
-                          ],
-                          "txInfo": {
-                            "frequency": 868300000,
-                            "dataRate": {
-                              "modulation": "LORA",
-                              "bandwidth": 125,
-                              "spreadFactor": 7
-                            },
-                            "adr": true,
-                            "codeRate": "4/5"
-                          },
-                          "fCnt": 92,
-                          "fPort": 1,
-                          "data": "AQIDBAUGBwgJCg=="
+                          "mac": "aa55c07bbc9e0ab0",
+                          "rssi": -65,
+                          "loRaSNR": 10.2
                         }
-                    '''
+                      ],
+                      "txInfo": {
+                        "frequency": 868300000,
+                        "dataRate": {
+                          "modulation": "LORA",
+                          "bandwidth": 125,
+                          "spreadFactor": 7
+                        },
+                        "adr": true,
+                        "codeRate": "4/5"
+                      },
+                      "fCnt": 92,
+                      "fPort": 1,
+                      "data": "AQIDBAUGBwgJCg=="
+                    }'''
+
+
+x = datetime.datetime.now()
+print x.strftime('%d-%b-%Y %H:%M:%S')
+print x.

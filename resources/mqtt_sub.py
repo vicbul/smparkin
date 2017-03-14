@@ -2,13 +2,14 @@ import paho.mqtt.client as mqtt
 from SmartParking import settings
 import json, requests, os
 import base64, binascii
+# from resources.models import *
 
 #Proxy env variables need to be disabled for requests to work properly on VM server
 os.environ['http_proxy']=''
 os.environ['https_proxy']=''
 
 def on_connect(client, userdata, rc):
-    print 'Subscriving to MQTT...'
+    print 'Subscribing to MQTT...'
     client.subscribe("gateway/#")
     client.subscribe("application/#")
 
@@ -28,6 +29,7 @@ def on_message(client, userdata, msg):
                                   "phyPayload":str(json_msg['phyPayload'])
                               })
     elif msg.topic.find('application') != -1:
+        decoded_data = base64.b64decode(json_msg['data'])
         r = requests.post('http://localhost:8000/resources/app_data/',
                           json={
                                  "applicationID": str(json_msg['applicationID']),
@@ -35,9 +37,50 @@ def on_message(client, userdata, msg):
                                  "nodeName": str(json_msg['nodeName']),
                                  "devEUI": str(json_msg['devEUI']),
                                  "data":str(json_msg['data']),
-                                 "data_decoded":binascii.hexlify(base64.b64decode(json_msg['data'])),
+                                 # "data_decoded":binascii.hexlify(base64.b64decode(json_msg['data'])),
+                                 "data_decoded":decoded_data,
                             })
         print 'data_decoded', binascii.hexlify(base64.b64decode(json_msg['data']))
+
+        # if not APP.objects.get(resourceID = str(json_msg['applicationID'])):
+        app = requests.post('http://localhost:8000/resources/app/',
+                          json={
+                                 "resourceID": str(json_msg['applicationID']),
+                                 "name": str(json_msg['applicationName']),
+                          })
+
+        # if not APP.objects.get(resourceID = str(json_msg['devEUI'])):
+        mu = requests.post('http://localhost:8000/resources/container/',
+                          json={
+                                 "resourceID": str(json_msg['devEUI']),
+                                 "name": str(json_msg['nodeName']),
+                                 "parent": str(json_msg['applicationID']),
+                          })
+
+        sensors_amount = int(decoded_data[0:2])
+        sensors_status = [int(s) for s in decoded_data[2:]]
+        i = 1
+        for s in sensors_status:
+            sensor_cnt = requests.post('http://localhost:8000/resources/container/',
+                              json={
+                                     "resourceID": str(json_msg['devEUI'])+'_'+str(i),
+                                     "name": "sensor_"+str(i),
+                                     "parent": str(json_msg['devEUI']),
+                              })
+            rx_cnt = requests.post('http://localhost:8000/resources/container/',
+                              json={
+                                     "resourceID": str(json_msg['devEUI'])+'_'+str(i)+"_rx",
+                                     "name": "rx",
+                                     "parent": str(json_msg['devEUI'])+'_'+str(i),
+                              })
+
+            sensor_cin = requests.post('http://localhost:8000/resources/cin/',
+                              json={
+                                     "name": "cin",
+                                     "parent": str(json_msg['devEUI'])+'_'+str(i)+"_rx",
+                                     "content": s,
+                              })
+            i += 1
 
 client = mqtt.Client()
 client.on_connect = on_connect

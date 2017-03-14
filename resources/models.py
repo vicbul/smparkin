@@ -39,7 +39,7 @@ class Resource(PolymorphicMPTTModel):
     parentID = models.CharField(max_length=200, blank=True)
     # not supported for subscription/contentinstance in IoTdm BORON
     accessControlPolicyIDs = models.CharField(max_length=200, blank=True, default='[]') # Array expected for this value
-    creationTime = models.DateTimeField(blank=True, null=True)
+    creationTime = models.DateTimeField(blank=True, default=timezone.now(), null=True)
     lastModifiedTime = models.DateTimeField(blank=True, null=True)
     expirationTime = models.DateTimeField(default=datetime.datetime.strptime('20991116T000000', "%Y%m%dT%H%M%S" ))
     labels = models.CharField(max_length=200, blank=True, default='[]') # Array expected for this value

@@ -1,17 +1,30 @@
 from django.shortcuts import render, render_to_response
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.views.generic import View
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from models import *
 from serializers import *
+from django.db.models import Max, F
+import rx_simulator
+import time
 
 # Create your views here.
 
 def subscription(request):
     #print 'request', request
     return render(request, 'resources/subscriptions.html')
+
+def simulator(request):
+    try:
+        rx_simulator.run()
+        return HttpResponse('<h1>Simulated data sent.</h1>')
+    except Exception as e:
+        raise Http404("Some nasty error happened while running the simulator. It's all your fault!")
+
+
+
 
 # List all Resources in the tree (common attributes)
 # resource_tree/
@@ -57,7 +70,11 @@ class ContainerView(APIView):
 
     def get(self, request, format=None):
         print 'GET request received:', #request.data
-        resources = CONTAINER.objects.all()
+        if request.GET.get('type', ''):
+            if request.GET['type']=='rx':
+                resources = CONTAINER.objects.filter(name='rx')
+        else:
+            resources = CONTAINER.objects.all()
         serializer = ContainerSerializer(resources, many=True)
         return Response(serializer.data)
 
@@ -65,7 +82,7 @@ class ContainerView(APIView):
         print 'POST request received:', #request.data
         # If there is no resourceID create it, else update it
         if not CONTAINER.objects.filter(resourceID = request.data['resourceID']):
-            print Resource.objects.get(resourceID = request.data['parent'])
+            # print Resource.objects.get(resourceID = request.data['parent'])
             request.data['parent'] = Resource.objects.get(resourceID = request.data['parent']).id
             serializer = ContainerSerializer(data=request.data)
             if serializer.is_valid():
@@ -86,16 +103,31 @@ class ContainerView(APIView):
 class CinView(APIView):
 
     def get(self, request, format=None):
-        print 'GET request received:', #request.data
-        resources = CONTENTINSTANCE.objects.all()
-        serializer = CinSerializer(resources, many=True)
+        print 'GET request received:', request.GET #request.data
+        if request.GET.get('instances', ''):
+            start = time.time()
+            cnt_rx = CONTAINER.objects.filter(name='rx')
+            resources = []
+            for rx in cnt_rx:
+                cin = CONTENTINSTANCE.objects.filter(parent=rx).order_by('-creationTime')[0]
+                print 'cin', cin.creationTime
+                resources.append(cin)
+            end = time.time()
+            print 'cin Query lasted',end-start, 'seconds'
+            print 'cnt_rx', cnt_rx
+            # resources = CONTENTINSTANCE.objects.order_by('parent','-creationTime')
+            print 'resources max', resources
+        else:
+            resources = CONTENTINSTANCE.objects.all()
+        serializer = CinGetSerializer(resources, many=True)
         return Response(serializer.data)
 
     def post(self, request, format=None):
         print 'POST request received:', #request.data
-        print Resource.objects.get(resourceID = request.data['parent'])
+        # print Resource.objects.get(resourceID = request.data['parent'])
         request.data['parent'] = Resource.objects.get(resourceID = request.data['parent']).id
-        serializer = CinSerializer(data=request.data)
+        print 'request data', request.data
+        serializer = CinPostSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)

@@ -23,12 +23,19 @@ class ContainerSerializer(serializers.ModelSerializer):
         fields = ["name","resourceID","parent"]
 
 
-class CinSerializer(serializers.ModelSerializer):
+class CinPostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CONTENTINSTANCE
         fields = ["creationTime","name","parent","content"]
-        depth = 1
+
+
+class CinGetSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = CONTENTINSTANCE
+        fields = ["creationTime","name","parent","content"]
+        depth = 2
 
 
 class GatewayStatsSerializer(serializers.ModelSerializer):

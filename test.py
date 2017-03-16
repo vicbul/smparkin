@@ -81,6 +81,6 @@ payload_decripted = '''{
                     }'''
 
 
-x = datetime.datetime.now()
-print x.strftime('%d-%b-%Y %H:%M:%S')
-print x.
+x = ' '
+if x:
+    print 'yai'

@@ -144,4 +144,5 @@ urlpatterns = [
     url(r'^gateway_stats', views.GatewayStatsView.as_view()),
     url(r'^gateway_rx', views.GatewayRxView.as_view()),
     url(r'^app_data', views.AppDataView.as_view()),
+    url(r'^test', views.TestView.as_view()),
 ]

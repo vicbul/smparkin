@@ -23,11 +23,11 @@ class test(PolymorphicMPTTModel):
 
 class test1(test):
     tes1_to_parent = models.OneToOneField(test, parent_link=True)
-    test1_field = models.CharField(max_length=10, default='default test 1')
+    test1_field = models.CharField(max_length=100, default='default test 1')
 
 class test2(test):
     tes2_to_parent = models.OneToOneField(test, parent_link=True)
-    test2_field = models.CharField(max_length=10, default='default test 2')
+    test2_field = models.CharField(max_length=100, default='default test 2')
 
 
 class Resource(PolymorphicMPTTModel):

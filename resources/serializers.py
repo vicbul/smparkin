@@ -1,6 +1,21 @@
 from rest_framework import serializers
 from models import *
 
+class TestSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = test
+        fields = ('name','id')
+        depth=1
+
+class Test1Serializer(serializers.ModelSerializer):
+    parent = TestSerializer()
+
+    class Meta:
+        model = test
+        fields = ('name','parent')
+        depth=1
+
 class ResourceSerializer(serializers.ModelSerializer):
 
     class Meta:

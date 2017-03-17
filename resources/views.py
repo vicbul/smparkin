@@ -27,6 +27,17 @@ def simulator(request):
 
 
 # List all Resources in the tree (common attributes)
+
+class TestView(APIView):
+
+    def get(self, request):
+        resources = test1.objects.all()
+        serializer = Test1Serializer(resources, many=True)
+        return Response(serializer.data)
+
+    def post(self):
+        pass
+
 # resource_tree/
 class ResouceTree(APIView):
 

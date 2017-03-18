@@ -74,6 +74,14 @@ def on_message(client, userdata, msg):
                                      "parent": str(json_msg['devEUI'])+'_'+str(i),
                               })
 
+            tx_cnt = requests.post('http://localhost:8000/resources/container/',
+                              json={
+                                     "resourceID": str(json_msg['devEUI'])+'_'+str(i)+"_tx",
+                                     "name": "tx",
+                                     "parent": str(json_msg['devEUI'])+'_'+str(i),
+                              })
+
+
             sensor_cin = requests.post('http://localhost:8000/resources/cin/',
                               json={
                                      "name": "cin",

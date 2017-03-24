@@ -53,6 +53,21 @@ class CinGetSerializer(serializers.ModelSerializer):
         depth = 2
 
 
+class LoraTxPostSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = LoraTx
+        fields = ["creationTime","name","parent","applicationID","devEUI","data"]
+
+
+class LoraTxGetSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = LoraTx
+        fields = ["creationTime","name","parent","applicationID","devEUI","data"]
+        depth = 2
+
+
 class GatewayStatsSerializer(serializers.ModelSerializer):
 
     class Meta:

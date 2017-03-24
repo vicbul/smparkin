@@ -144,6 +144,41 @@ class CinView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+class LoraTxView(APIView):
+
+    def get(self, request, format=None):
+        print 'GET request received:', request.GET #request.data
+        if request.GET.get('instances', ''):
+            start = time.time()
+            cnt_tx = CONTAINER.objects.filter(name='tx')
+            resources = []
+            for tx in cnt_tx:
+                cin = LoraTx.objects.filter(parent=tx).order_by('-creationTime')[0]
+                print 'cin', cin.creationTime
+                resources.append(cin)
+            end = time.time()
+            print 'cin Query lasted',end-start, 'seconds'
+            print 'cnt_rx', cnt_tx
+            # resources = CONTENTINSTANCE.objects.order_by('parent','-creationTime')
+            print 'resources max', resources
+        else:
+            resources = LoraTx.objects.all()
+        serializer = LoraTxGetSerializer(resources, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        print 'POST request received:', #request.data
+        # print Resource.objects.get(resourceID = request.data['parent'])
+        request.data['parent'] = Resource.objects.get(resourceID = request.data['parent']).id
+        print 'request data', request.data
+        serializer = LoraTxPostSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class GatewayStatsView(APIView):
 
     def get(self, request, format=None):

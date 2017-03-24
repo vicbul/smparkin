@@ -170,6 +170,7 @@ CHECK_PROXIES = True
 # MQTT Broker
 MQTT_IP = "10.48.18.34"
 MQTT_PORT = 8587
+CHECK_MQTT_SERVER = True
 
 # IoTdm server
 IOTDM_IP = '127.0.0.1'

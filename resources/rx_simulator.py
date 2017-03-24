@@ -21,7 +21,7 @@ def simulator():
                           "applicationID": "0",
                           "applicationName": "simulator",
                           "nodeName": "MU_"+MU_number,
-                          "devEUI": "000202080000000"+MU_number if int(MU_number) < 10 else "00020208000000"+MU_number, # "0002020800000000"
+                          "devEUI": "000202090000000"+MU_number if int(MU_number) < 10 else "00020209000000"+MU_number, # "0002020800000000"
                           "rxInfo": [
                             {
                               "mac": "aa55c07bbc9e0ab0",

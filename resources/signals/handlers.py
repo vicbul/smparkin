@@ -1,10 +1,11 @@
 from django.core.exceptions import ValidationError
 from django.db.models.signals import pre_init, post_init, pre_save, pre_delete, post_save, post_delete
-from resources.models import Resource, test, CSE, APP, CONTAINER, CONTENTINSTANCE, SUBSCRIPTION
+from resources.models import *
 from mptt_graph.models import GraphModel
 from resources.references import longToShortDict, shortToLongDict
 from SmartParking import settings
-import datetime, requests
+import datetime, requests, json
+import paho.mqtt.client as mqtt
 
 if settings.CHECK_IOTDM_RESPONSE is True:
     from iotdm import iotdm_api
@@ -192,8 +193,8 @@ def parse_date(date):
     date = datetime.datetime.strptime(date, "%Y%m%dT%H%M%S" )
     return date
 
-#TODO get_ancestors method returns an empty queryset when called from pre_delete signal receivers. It returns a list without immediate parent
-#TODO when deleting multiple levels objects it may occur that a parent is deleted before the child and be removed from IoTdm. This would prevent django object from being deleted
+# get_ancestors method returns an empty queryset when called from pre_delete signal receivers. It returns a list without immediate parent
+# when deleting multiple levels objects it may occur that a parent is deleted before the child and be removed from IoTdm. This would prevent django object from being deleted
 def remove_from_tree(sender,  instance, **kwargs):
     print "I've got a signal pre_delete for", instance
     if sender in [APP, CONTAINER, CONTENTINSTANCE, SUBSCRIPTION]:
@@ -211,8 +212,27 @@ def remove_from_tree(sender,  instance, **kwargs):
     elif sender is CSE:
         print 'CSE root resource cannot be deleted from IoTdm. Please restart IoTdm to re-provisionning CSE details.'
 
+def lora_tx(sender, instance, **kwargs):
+    topic = 'application/'+instance.applicationID+'/node/'+instance.devEUI+'/tx'
+    txdata = {
+        "reference": instance.reference,
+        "confirmed": instance.confirmed,
+        "fPort": instance.fPort,
+        "data": base64.b64encode(str(instance.data)),
+    }
+    payload = json.dumps(txdata)
+    print payload
+    # TODO publish loratx in MQTT
+    client = mqtt.Client()
+    client.connect(settings.MQTT_IP, settings.MQTT_PORT, 60)
+    client.publish(topic=topic,
+                   payload=payload)
+    client.disconnect()
+
 if settings.CHECK_IOTDM_RESPONSE is True:
     # post_init.connect(save_iotdm_resource_name)
     post_save.connect(cse_provisioning, CSE)
     post_save.connect(add_to_tree)
     pre_delete.connect(remove_from_tree)
+
+post_save.connect(lora_tx, LoraTx)

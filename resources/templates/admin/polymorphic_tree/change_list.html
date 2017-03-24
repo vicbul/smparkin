@@ -1,10 +1,17 @@
 {% extends "admin/polymorphic_tree/change_list.html" %}
 {% load staticfiles mptt_tags %}
 
+{% block object-tools-items %}
+    {{ block.super }}
+    <li>
+        <a class="historylink" href="/resources/simulate_data" target="_blank">Simulate Rx Data</a>
+    </li>
+{% endblock %}
+
 {% block pagination %}
     {{ block.super }}
     <h1>Resources tree graph:</h1>
-    <link rel="stylesheet" media="screen, projection" href="{% static 'resources/tree.css' %}" />
+    <!--<link rel="stylesheet" media="screen, projection" href="{% static 'resources/tree.css' %}" />-->
     <div class="row" id=resources_tree>
         <div class="col-xs-12">
             <div class="text-center" style="width:100%;font-size:65%">
@@ -24,6 +31,8 @@
                                     <div id="displayzone_{{ node.id }}" class="displayzone"></div>
                                 </a>
                                 {% if not node.is_leaf_node %}
+                                    {# node.is_leaf_node #}
+                                    {# node.can_have_children #}
                                     <ul>
                                         {{ children }}
                                     </ul>

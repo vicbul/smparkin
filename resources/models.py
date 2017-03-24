@@ -6,7 +6,7 @@ from polymorphic_tree.models import PolymorphicMPTTModel, PolymorphicTreeForeign
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from SmartParking import settings
-import datetime, socket, base64
+import datetime, socket, base64, random, string
 
 if settings.CHECK_IOTDM_RESPONSE is True:
     from iotdm import iotdm_api
@@ -191,6 +191,22 @@ class SUBSCRIPTION(Resource):
             check_parent = iotdm_api.retrieve(settings.IOTDM_SERVER+parent_uri)
             if check_parent.find('error') != -1:
                 raise ValidationError('Resource parent cannot be found on IoTdm.')
+
+class LoraTx(Resource):
+    resourceType = models.IntegerField(default=4, blank=False)
+    applicationID = models.CharField(max_length=100, blank=False)
+    devEUI = models.CharField(max_length=100, blank=False)
+    reference = models.CharField(max_length=100, default=''.join(random.choice(string.lowercase) for i in range(10)))
+    confirmed = models.BooleanField(default=True)
+    fPort = models.IntegerField(default=10)
+    data = models.IntegerField(default=0) #0=Free, 1=Busy
+
+    can_have_children = False
+
+    def save(self, *args, **kwargs):
+        super(LoraTx, self).save(*args, **kwargs)
+        self.name = 'loratx'
+
 
 class GatewayStats(Model):
     mac = models.CharField(max_length=200, blank=True)

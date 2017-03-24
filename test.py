@@ -6,6 +6,7 @@ from iotdm import iotdm_api
 from resources.references import shortToLongDict
 # from crypto.Cipher import AES
 from lora.crypto import loramac_decrypt
+from SmartParking import settings
 
 x = 'AQIDBAUGBwgJCg=='
 y = base64.b64encode('esto es una prueba')
@@ -80,7 +81,22 @@ payload_decripted = '''{
                       "data": "AQIDBAUGBwgJCg=="
                     }'''
 
+# topic: application/1/node/0002020800000000/tx
+tx_payload = '''{
+    "reference": "abcd1234",
+    "confirmed": true,
+    "fPort": 10,
+    "data": "ZXN0byBlcyB1bmEgcHJ1ZWJh"
+}'''
 
-x = ' '
-if x:
-    print 'yai'
+loratx = {
+    "name": "loratx",
+    "parent": "0002020900000001_1_tx",
+    "applicationID": "1",
+    "devEUI": "0002020800000000",
+    "data": 1
+}
+
+g = socket.gethostbyaddr(settings.MQTT_IP)
+print g
+

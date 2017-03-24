@@ -70,6 +70,12 @@ class SubAdmin(CommonAdmin):
     mandatory_fields = ['resourceType','name','notificationURI','notificationContentType','eventNotificationCriteria','parent']
 
 
+class LoratxAdmin(CommonAdmin):
+    base_model = LoraTx
+    mandatory_fields = ['applicationID','devEUI','reference','confirmed','fPort','data','parent']
+    # readonly_fields = ['name']
+
+
 class CombinedAdmin(PolymorphicMPTTParentModelAdmin):
     # To define/disable actions dropdown menu
     actions = None
@@ -81,14 +87,14 @@ class CombinedAdmin(PolymorphicMPTTParentModelAdmin):
         (CONTAINER, CntAdmin),
         (SUBSCRIPTION, SubAdmin),
         (CONTENTINSTANCE, CinAdmin),# custom admin allows custom edit/delete view.
+        (LoraTx, LoratxAdmin),
     )
 
     list_display = ('name', 'actions_column')
 
     class Media:
         css = {
-            'all': ('admin/treenode/admin.css',
-                    'resources/tree.css'),
+            'all': ['resources/tree.css'],
         }
         # js = ('https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js',
         #       'resources/view_tree.js',

@@ -2,6 +2,12 @@
 /* CSS only applies to the section of the page on a <div> with ID = #resources_tree */
 #resources_tree * {margin: 0; padding: 0;}
 
+/*#resources_tree {
+    width:1000px !important;
+    overflow-x: scroll !important;
+    white-space:nowrap !important;
+}*/
+
 #resources_tree ul {
 	padding-top: 20px; 
 	position: relative;
@@ -11,7 +17,7 @@
 }
 
 #resources_tree li {
-	float: left; 
+	float: left;
 	text-align: center;
 	list-style-type: none;
 	position: relative;

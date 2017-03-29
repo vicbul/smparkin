@@ -117,7 +117,7 @@ right connector from last child*/
 
 /*Time for some hover effects*/
 /*We will apply the hover effect the the lineage of the element also*/
-#resources_tree li a:hover, #resources_tree li a:hover+button+ul li a {
+#resources_tree li a:hover, #resources_tree li a:hover+span+ul li a {
 	background: #c8e4f8; color: #000; border: 1px solid #94a0b4;
 }
 /*Connector styles on hover*/

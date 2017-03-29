@@ -11,16 +11,17 @@
 {% block pagination %}
     {{ block.super }}
     <h1>Resources tree graph:</h1>
+    <h2><span class="expand-levels">Expand all nodes until level</span></h2>
     <!--<link rel="stylesheet" media="screen, projection" href="{% static 'resources/tree.css' %}" />-->
     <div class="row" id=resources_tree>
         <div class="col-xs-12">
             <div class="text-center" style="width:100%;font-size:65%">
                 <div class="text-left" style="display:inline-block">
                     <div class="tree">
-                        <ul>
+                        <ul id="tree_root">
                         <!--cl.queryset contains the list of nodes (resources). recursetree loop across all nodes.-->
                         {% recursetree cl.root_queryset %}
-                            <li>
+                            <li class="level-block level{{ node.level }}" data-level="{{ node.level }}">
                                 <!--adding links to change view for each node-->
                                 <a href="{{ node.id }}/change/" id="{{ node.id }}"
                                         {# If the node type match the filter node type being applied it add a class for css #}
@@ -33,7 +34,7 @@
                                 {% if not node.is_leaf_node %}
                                     {# node.is_leaf_node #}
                                     {# node.can_have_children #}
-                                    <ul>
+                                    <ul class="level_up">
                                         {{ children }}
                                     </ul>
                                 {% endif %}

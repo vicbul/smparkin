@@ -97,6 +97,4 @@ loratx = {
     "data": 1
 }
 
-g = socket.gethostbyaddr(settings.MQTT_IP)
-print g
 

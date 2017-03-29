@@ -54,8 +54,17 @@ class AppAdmin(CommonAdmin):
     mandatory_fields = ['resourceType','name','requestReachability','parent']
 
 
+# TODO consider displaying data Inline for each container
+# class CinInline(admin.TabularInline):
+#     model = Data
+#     extra = 0
+#
+#     def get_ordering(self, request):
+#         return ['creationTime']
+
 class CntAdmin(CommonAdmin):
     base_model = CONTAINER
+    # inlines = [CinInline]
     mandatory_fields = ['resourceType','name','parent']
 
 
@@ -96,9 +105,9 @@ class CombinedAdmin(PolymorphicMPTTParentModelAdmin):
         css = {
             'all': ['resources/tree.css'],
         }
-        # js = ('https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js',
-        #       'resources/view_tree.js',
-        # )
+        js = ('https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js',
+              'resources/test.js',
+        )
 
 
 class GatewayStatsAdmin(ModelAdmin):

@@ -34,7 +34,6 @@ class Resource(PolymorphicMPTTModel):
     # Resource resource attributes present in TS-0004 TS-0004 Service Layer Core Protocol standard
     parent = PolymorphicTreeForeignKey('self', null=True, blank=True, related_name='children')
     resourceID = models.CharField(max_length=200, blank=True)
-    # TODO add a new field resourceName to sync with IoTdm and keep django name as an modifiable alias
     name = models.CharField(max_length=200, blank=False)
     parentID = models.CharField(max_length=200, blank=True)
     # not supported for subscription/contentinstance in IoTdm BORON
@@ -171,6 +170,16 @@ class CONTENTINSTANCE(Resource):
             check_parent = iotdm_api.retrieve(settings.IOTDM_SERVER+parent_uri)
             if check_parent.find('error') != -1:
                 raise ValidationError('Resource parent cannot be found on IoTdm.')
+
+
+class Data(models.Model):
+    parent = models.ForeignKey(CONTAINER,on_delete=models.CASCADE)
+    data = models.CharField(max_length=100, null=True)
+    creationTime = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        verbose_name_plural = 'Data'
+        get_latest_by = 'creationTime'
 
 
 class SUBSCRIPTION(Resource):

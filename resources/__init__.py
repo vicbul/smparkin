@@ -1,5 +1,5 @@
-import mqtt_sub
+from SmartParking import settings
 
-
-
-mqtt_sub.connect()
+if settings.CHECK_MQTT_SERVER is True:
+    import mqtt_sub
+    mqtt_sub.connect()

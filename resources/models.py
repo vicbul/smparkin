@@ -21,9 +21,11 @@ class test(PolymorphicMPTTModel):
     def __str__(self):
         return self.name
 
+
 class test1(test):
     tes1_to_parent = models.OneToOneField(test, parent_link=True)
     test1_field = models.CharField(max_length=100, default='default test 1')
+
 
 class test2(test):
     tes2_to_parent = models.OneToOneField(test, parent_link=True)
@@ -47,6 +49,8 @@ class Resource(PolymorphicMPTTModel):
 
     # Below attributes are present on TS-0004 Service Layer Core Protocol standard but not on IoTdm documentation
     dynamicAuthorizationConsultationIDs = models.CharField(max_length=200, blank=True)
+
+    can_be_root = False
 
     # To connect with IoTdm handlers need to be imported in resources.apps.ResourcesConfig.ready
     # check_iotdm_response = True
@@ -89,7 +93,7 @@ class Resource(PolymorphicMPTTModel):
 class CSE(Resource):
     #cseType = models.CharField(max_length=200, blank=True)
     resourceType = models.IntegerField(default=5, blank=False)
-    CSE_ID = models.CharField(max_length=200, blank=False, default='makazmie')
+    CSE_ID = models.CharField(max_length=200, blank=False, default='root')
     CSE_Type = models.CharField(max_length=200, blank=False, default='IN-CSE')
     supportedResourceType = models.CharField(max_length=200, blank=True)
     pointOfAccess = models.CharField(max_length=200, blank=True, default='[]') # Array expected for this value
@@ -100,6 +104,8 @@ class CSE(Resource):
 
     # Below attributes are present on IoTdm documentation but not on TS-0004 Service Layer Core Protocol standard
     notificationCongestionPolicy = models.CharField(max_length=200, blank=True)
+
+    can_be_root = True
 
     def update_from_iotdm(self):
         print 'Update from IoTdm. Get resource parameters.'
@@ -152,6 +158,7 @@ class CONTAINER(Resource):
                 raise ValidationError('Resource parent cannot be found on IoTdm.')
 
 
+# TODO convert contentinstance into regular model in order to leave data out of the polymorphic MPTT tree admin view
 class CONTENTINSTANCE(Resource):
     resourceType = models.IntegerField(default=4, blank=False)
     content = models.CharField(max_length=1000, blank=False)
@@ -201,6 +208,7 @@ class SUBSCRIPTION(Resource):
             if check_parent.find('error') != -1:
                 raise ValidationError('Resource parent cannot be found on IoTdm.')
 
+
 class LoraTx(Resource):
     resourceType = models.IntegerField(default=4, blank=False)
     applicationID = models.CharField(max_length=100, blank=False)
@@ -235,6 +243,7 @@ class GatewayStats(Model):
     def __str__(self):
         return str(self.id)
 
+
 class GatewayRx(Model):
     date = models.DateTimeField(default=timezone.now)
     rxInfo = models.CharField(max_length=1000, blank=True)
@@ -245,6 +254,7 @@ class GatewayRx(Model):
 
     def __str__(self):
         return str(self.id)
+
 
 class AppData(Model):
     date = models.DateTimeField(default=timezone.now)

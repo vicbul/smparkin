@@ -1,6 +1,10 @@
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin
 from polymorphic_tree.admin import PolymorphicMPTTParentModelAdmin, PolymorphicMPTTChildModelAdmin
+from polymorphic.admin import PolymorphicInlineSupportMixin, StackedPolymorphicInline, PolymorphicInlineModelAdmin
+from polymorphic.formsets.models import BasePolymorphicModelFormSet, BasePolymorphicInlineFormSet
+from django import forms
+
 
 from models import *
 
@@ -11,6 +15,42 @@ from models import *
 # Register your models here.
 # TODO create a button in the admi panel to re-build the tree ( for r in Resource.objects.all(): r.save() )
 # TODO Show what kind of resource is every tree entry in the admin panel (NAME / TYPE / ACTIONS)
+
+class CustomMPTTAdminForm(forms.ModelForm):
+    """
+    A form which validates that the chosen parent for a node isn't one of
+    its descendants.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super(CustomMPTTAdminForm, self).__init__(*args, **kwargs)
+        if self.instance and self.instance.pk:
+            instance = self.instance
+            # if instance.resourceType == 4:
+            #     return
+            opts = self._meta.model._mptt_meta
+            parent_field = self.fields.get(opts.parent_attr)
+            if parent_field:
+                parent_qs = parent_field.queryset
+                parent_qs = parent_qs.exclude(
+                    pk__in=instance.get_descendants(
+                        include_self=True
+                    ).values_list('pk', flat=True)
+                )
+                parent_field.queryset = parent_qs
+
+    def clean(self):
+        cleaned_data = super(CustomMPTTAdminForm, self).clean()
+        opts = self._meta.model._mptt_meta
+        parent = cleaned_data.get(opts.parent_attr)
+        if self.instance and parent:
+            if parent.is_descendant_of(self.instance, include_self=True):
+                if opts.parent_attr not in self._errors:
+                    self._errors[opts.parent_attr] = self.error_class()
+                self._errors[opts.parent_attr].append(_('Invalid parent'))
+                del self.cleaned_data[opts.parent_attr]
+        return cleaned_data
+
 
 class CommonAdmin(PolymorphicMPTTChildModelAdmin):
     base_model = Resource
@@ -23,6 +63,8 @@ class CommonAdmin(PolymorphicMPTTChildModelAdmin):
     save_as_continue = False
 
     search_fields = ['name',]
+
+    # form = CustomMPTTAdminForm
 
     def __init__(self, *args, **kwargs):
         super(CommonAdmin, self).__init__(*args, **kwargs)
@@ -54,24 +96,33 @@ class AppAdmin(CommonAdmin):
     mandatory_fields = ['resourceType','name','requestReachability','parent']
 
 
-# TODO consider displaying data Inline for each container
-# class CinInline(admin.TabularInline):
-#     model = Data
-#     extra = 0
-#
-#     def get_ordering(self, request):
-#         return ['creationTime']
+# Displaying data Inline for each container
+class CinInline(admin.TabularInline):
+    model = CONTENTINSTANCE
+    fk_name = 'parent'
+    fields = ['creationTime','lastModifiedTime','name','content']
+    extra = 0
 
-class CntAdmin(CommonAdmin):
+    def get_ordering(self, request):
+        return ['creationTime']
+
+    class Media:
+        css = {
+            'all': ['resources/cin_inline.css'],
+        }
+
+
+
+class CntAdmin(CommonAdmin, PolymorphicInlineSupportMixin):
     base_model = CONTAINER
-    # inlines = [CinInline]
+    inlines = [CinInline]
     mandatory_fields = ['resourceType','name','parent']
 
-
-class CinAdmin(CommonAdmin):
-    base_model = CONTENTINSTANCE
-    # exclude = ['resourceID']
-    mandatory_fields = ['resourceType','name','content','parent']
+    class Media:
+        js = (
+            'https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js',
+            'resources/h2_collapse.js',
+        )
 
 
 class SubAdmin(CommonAdmin):
@@ -95,7 +146,7 @@ class CombinedAdmin(PolymorphicMPTTParentModelAdmin):
         (APP, AppAdmin),
         (CONTAINER, CntAdmin),
         (SUBSCRIPTION, SubAdmin),
-        (CONTENTINSTANCE, CinAdmin),# custom admin allows custom edit/delete view.
+        # (CONTENTINSTANCE, CinAdmin),# custom admin allows custom edit/delete view.
         (LoraTx, LoratxAdmin),
     )
 
@@ -106,7 +157,7 @@ class CombinedAdmin(PolymorphicMPTTParentModelAdmin):
             'all': ['resources/tree.css'],
         }
         js = ('https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js',
-              'resources/test.js',
+              'resources/collapsible_tree.js',
         )
 
 

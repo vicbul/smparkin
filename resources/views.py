@@ -24,8 +24,6 @@ def simulator(request):
         raise Http404("Some nasty error happened while running the simulator. It's all your fault!")
 
 
-
-
 # List all Resources in the tree (common attributes)
 
 class TestView(APIView):
@@ -38,16 +36,25 @@ class TestView(APIView):
     def post(self):
         pass
 
+
 # resource_tree/
 class ResouceTree(APIView):
 
     def get(self, request):
-        resources = Resource.objects.all()
+        # Return all nodes hanging from the parent provided by the parameter 'from'
+        if request.GET.get('from',''):
+            parent_id = request.GET['from']
+            resource_root = Resource.objects.get(id=parent_id)
+            resources = resource_root.get_descendants().exclude(name='cin')
+        # Return the whole tree
+        else:
+            resources = Resource.objects.exclude(name='cin')
         serializer = ResourceSerializer(resources, many=True)
         return Response(serializer.data)
 
     def post(self):
         pass
+
 
 class AppView(APIView):
 
@@ -111,23 +118,27 @@ class ContainerView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             # return Response(status=status.HTTP_409_CONFLICT)
 
+
 class CinView(APIView):
 
     def get(self, request, format=None):
-        print 'GET request received:', request.GET #request.data
+        print 'GET request received:', request.GET['instances'] #request.data
         if request.GET.get('instances', ''):
             start = time.time()
             cnt_rx = CONTAINER.objects.filter(name='rx')
             resources = []
-            for rx in cnt_rx:
-                cin = CONTENTINSTANCE.objects.filter(parent=rx).order_by('-creationTime')[0]
-                print 'cin', cin.creationTime
-                resources.append(cin)
+            if request.GET['instances'] == 'last':
+                for rx in cnt_rx:
+                    cin = CONTENTINSTANCE.objects.filter(parent=rx).order_by('-creationTime')[0]
+                    print 'cin', cin.creationTime
+                    resources.append(cin)
+
+                # resources = CONTENTINSTANCE.objects.order_by('parent','-creationTime')
+                print 'resources max', resources
+
             end = time.time()
             print 'cin Query lasted',end-start, 'seconds'
-            print 'cnt_rx', cnt_rx
-            # resources = CONTENTINSTANCE.objects.order_by('parent','-creationTime')
-            print 'resources max', resources
+
         else:
             resources = CONTENTINSTANCE.objects.all()
         serializer = CinGetSerializer(resources, many=True)
@@ -195,6 +206,7 @@ class GatewayStatsView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class GatewayRxView(APIView):
 
     def get(self, request, format=None):
@@ -210,6 +222,7 @@ class GatewayRxView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class AppDataView(APIView):
 

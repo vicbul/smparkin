@@ -40,7 +40,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Django Rest Framework:
     'rest_framework',
+    'rest_framework_docs',
+    'django_filters',
+    'crispy_forms',
+    # MPTT=POLYMORPHIC models tree:
     'mptt',
     'mptt_graph',
     'polymorphic_tree',
@@ -167,6 +172,12 @@ PROXIES = {
 }
 CHECK_PROXIES = True
 
+# DJANGO REST FRAMEWORK SETTINGS
+
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
+}
+
 # MQTT Broker
 # MAC server
 # To have launchd start mosquitto now and restart at login:
@@ -175,7 +186,7 @@ CHECK_PROXIES = True
 #   mosquitto -c /usr/local/etc/mosquitto/mosquitto.conf
 MQTT_IP = "127.0.0.1"
 MQTT_PORT = 1883
-CHECK_MQTT_SERVER = True
+CHECK_MQTT_SERVER = False
 
 # IoTdm server
 IOTDM_IP = '127.0.0.1'

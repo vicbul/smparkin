@@ -4,6 +4,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, Http404
 from resources.models import *
 from rest_framework.urlpatterns import format_suffix_patterns
+from rest_framework.documentation import include_docs_urls, include
+from rest_framework.routers import DefaultRouter
 from SmartParking import settings
 from resources.signals.handlers import parse_date
 
@@ -130,20 +132,21 @@ def iotdm_django_sync(response):
 
     return HttpResponse('')
 
+# ViewSets routers
+router = DefaultRouter()
+router.register(r'list_resources', views.ResourcesView)
+
 
 urlpatterns = [
+    url(r'^', include(router.urls)),
     # url(r'^$', views.subscription, name='subs'),
     url(r'^structure', TemplateView.as_view(template_name='resources/home.html'), name='home'),
-    url(r'^iotdm', iotdm_django_sync),#views.MyView.as_view(), name='my-view')
+    # url(r'^iotdm', iotdm_django_sync),#views.MyView.as_view(), name='my-view')
     url(r'^simulate_data', views.simulator),#views.MyView.as_view(), name='my-view')
-    url(r'^full_tree', views.ResouceTree.as_view()),
+    url(r'^get_sensors', views.GetSensors.as_view()),
+    url(r'^docs/', include_docs_urls(title='SmParking API')),
+    # url(r'^docs/', include('rest_framework_docs.urls')),
     # url(r'^status', views.Status.as_view()),
-    url(r'^app/$', views.AppView.as_view()),
-    url(r'^container', views.ContainerView.as_view()),
-    url(r'^cin', views.CinView.as_view()),
-    url(r'^loratx', views.LoraTxView.as_view()),
-    url(r'^gateway_stats', views.GatewayStatsView.as_view()),
-    url(r'^gateway_rx', views.GatewayRxView.as_view()),
-    url(r'^app_data', views.AppDataView.as_view()),
+    # url(r'^list_resources/$', views.ResourcesView.as_view({'get': 'list'})),
     url(r'^test', views.TestView.as_view()),
 ]

@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from models import *
+from django.db.models import Max
 
 class TestSerializer(serializers.ModelSerializer):
 
@@ -7,6 +8,7 @@ class TestSerializer(serializers.ModelSerializer):
         model = test
         fields = ('name','id')
         depth=1
+
 
 class Test1Serializer(serializers.ModelSerializer):
     parent = TestSerializer()
@@ -16,12 +18,34 @@ class Test1Serializer(serializers.ModelSerializer):
         fields = ('name','parent')
         depth=1
 
-class ResourceSerializer(serializers.ModelSerializer):
+
+# This represent the data received/transmitted from/to the sensors
+class ContentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = CONTENTINSTANCE
+        fields = ['content', 'creationTime']
+
+
+# this represent the rx/tx container
+class ContainerSerializer(serializers.ModelSerializer):
+    cin = ContentSerializer(many=True, source = 'last_cin', read_only=True)
+    print ('Serializer Cin:', cin.data)
+
+    class Meta:
+        model = CONTAINER
+        fields = ['id', 'name', 'cin', 'creationTime']#'__all__'
+        # depth = 0
+
+
+# this represents the sensor container
+class ParentSerializer(serializers.ModelSerializer):
+
+    children = ContainerSerializer(many=True, read_only=True)
 
     class Meta:
         model = Resource
-        fields = ['id', 'name', 'parent', 'level']#'__all__'
-        # depth = 0
+        fields = ['id','name','creationTime','children']
 
 
 class AppSerializer(serializers.ModelSerializer):
@@ -31,11 +55,11 @@ class AppSerializer(serializers.ModelSerializer):
         fields = ["name","resourceID"]
 
 
-class ContainerSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = CONTAINER
-        fields = ["name","resourceID","parent"]
+# class ContainerSerializer(serializers.ModelSerializer):
+#
+#     class Meta:
+#         model = CONTAINER
+#         fields = ["name","resourceID","parent"]
 
 
 class CinPostSerializer(serializers.ModelSerializer):

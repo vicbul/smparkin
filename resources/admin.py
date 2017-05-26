@@ -117,7 +117,6 @@ class CntAdmin(CommonAdmin, PolymorphicInlineSupportMixin):
     base_model = CONTAINER
     inlines = [CinInline]
     mandatory_fields = ['resourceType','name','parent']
-
     class Media:
         js = (
             'https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js',
@@ -146,7 +145,6 @@ class CombinedAdmin(PolymorphicMPTTParentModelAdmin):
         (APP, AppAdmin),
         (CONTAINER, CntAdmin),
         (SUBSCRIPTION, SubAdmin),
-        # (CONTENTINSTANCE, CinAdmin),# custom admin allows custom edit/delete view.
         (LoraTx, LoratxAdmin),
     )
 

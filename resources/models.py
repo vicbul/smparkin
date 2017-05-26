@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from django.db.models import Model
+from django.db.models import Model, Max
 from polymorphic_tree.models import PolymorphicMPTTModel, PolymorphicTreeForeignKey
 from django.core.exceptions import ValidationError
 from django.utils import timezone
@@ -40,7 +40,7 @@ class Resource(PolymorphicMPTTModel):
     parentID = models.CharField(max_length=200, blank=True)
     # not supported for subscription/contentinstance in IoTdm BORON
     accessControlPolicyIDs = models.CharField(max_length=200, blank=True, default='[]') # Array expected for this value
-    creationTime = models.DateTimeField(blank=True, default=timezone.now(), null=True)
+    creationTime = models.DateTimeField(blank=True, default=timezone.now, null=True)
     lastModifiedTime = models.DateTimeField(blank=True, null=True)
     expirationTime = models.DateTimeField(default=datetime.datetime.strptime('20991116T000000', "%Y%m%dT%H%M%S" ))
     labels = models.CharField(max_length=200, blank=True, default='[]') # Array expected for this value
@@ -56,6 +56,7 @@ class Resource(PolymorphicMPTTModel):
     # check_iotdm_response = True
     iotdm_resource_name = None
     iotdm_response = None
+
 
     # This function will raise a ValidationError in case check_iotdm_response is true and the iotdm server replies with
     # an error.
@@ -144,6 +145,13 @@ class CONTAINER(Resource):
     resourceType = models.IntegerField(default=3, blank=False)
     # parent_resource = models.ForeignKey(Resource, on_delete=models.CASCADE, related_name='Parent Resource', default=1)
 
+    def last_cin(self):
+        try:
+            return self.cin.all().order_by('-creationTime')[:1]
+            # return self.cin.objects.latest('creationTime')
+        except:
+            return
+
     def clean(self):
 
         if settings.CHECK_IOTDM_RESPONSE is True:
@@ -159,24 +167,26 @@ class CONTAINER(Resource):
 
 
 # TODO convert contentinstance into regular model in order to leave data out of the polymorphic MPTT tree admin view
-class CONTENTINSTANCE(Resource):
+class CONTENTINSTANCE(models.Model):
+    parent = models.ForeignKey(CONTAINER, related_name='cin', on_delete=models.CASCADE)
+    name = models.CharField(max_length=200, default='cin')
     resourceType = models.IntegerField(default=4, blank=False)
     content = models.CharField(max_length=1000, blank=False)
-
-    can_have_children = False
-
-    def clean(self):
-
-        if settings.CHECK_IOTDM_RESPONSE is True:
-            try:
-                parent_uri = '/'.join([ancestor.name for ancestor in self.parent.get_ancestors(include_self=True)])
-                print 'parent_uri', parent_uri
-            except Exception, e:
-                raise ValidationError('Unable to build parent URI. Please choose a Parent instance: '+str(e))
-
-            check_parent = iotdm_api.retrieve(settings.IOTDM_SERVER+parent_uri)
-            if check_parent.find('error') != -1:
-                raise ValidationError('Resource parent cannot be found on IoTdm.')
+    creationTime = models.DateTimeField(blank=True, default=timezone.now, null=True)
+    lastModifiedTime = models.DateTimeField(blank=True, null=True)
+#
+#     def clean(self):
+#
+#         if settings.CHECK_IOTDM_RESPONSE is True:
+#             try:
+#                 parent_uri = '/'.join([ancestor.name for ancestor in self.parent.get_ancestors(include_self=True)])
+#                 print 'parent_uri', parent_uri
+#             except Exception, e:
+#                 raise ValidationError('Unable to build parent URI. Please choose a Parent instance: '+str(e))
+#
+#             check_parent = iotdm_api.retrieve(settings.IOTDM_SERVER+parent_uri)
+#             if check_parent.find('error') != -1:
+#                 raise ValidationError('Resource parent cannot be found on IoTdm.')
 
 
 class Data(models.Model):

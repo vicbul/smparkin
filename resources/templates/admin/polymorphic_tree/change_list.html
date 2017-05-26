@@ -29,7 +29,8 @@
                                             {% if node.polymorphic_ctype_str_id == cl.params.ct_id %}
                                                 class="nodeTypeFilter"
                                             {% endif %}>
-                                        {{ node.name }}
+                                        <b>{{ node.name }}</b><br>
+                                        (id: {{ node.id }})
                                         <div id="displayzone_{{ node.id }}" class="displayzone"></div>
                                     </a>
                                     {% if not node.is_leaf_node %}

@@ -2,6 +2,7 @@ import paho.mqtt.client as mqtt
 from SmartParking import settings
 import json, requests, os, signal
 import base64, binascii
+from SmartParking import settings
 # from resources.models import *
 
 #Proxy env variables need to be disabled for requests to work properly on VM server

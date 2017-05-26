@@ -6,6 +6,20 @@ requests
 paho-mqtt
 json
 PyMySQL
-djangorestframework
 virtualenv
 pytz
+
+# DRF API dependencies
+djangorestframework
+coreapi
+django-filter
+django-crispy-forms
+# Documentation
+pygments
+markdown
+
+# drfdocs dependencies
+drfdocs
+coverage
+flake8
+mkdocs

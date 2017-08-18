@@ -117,3 +117,21 @@ class AppDataSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         model = Status
 #         fields = ["time","lati","long","alti","rxnb","rxok","rxfw","ackr","dwnb","txnb"]
+
+#----------------------#
+
+class ResourceSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Resource
+        fields = ['id', 'name', 'parent', 'level']#'__all__'
+        # depth = 0
+
+
+class CinSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = CONTENTINSTANCE
+        fields = ["creationTime","name","parent","content"]
+        depth = 1
+

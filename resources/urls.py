@@ -149,4 +149,11 @@ urlpatterns = [
     # url(r'^status', views.Status.as_view()),
     # url(r'^list_resources/$', views.ResourcesView.as_view({'get': 'list'})),
     url(r'^test', views.TestView.as_view()),
+    #-------------------#
+    url(r'^app/$', views.AppView.as_view()),
+    url(r'^container', views.ContainerView.as_view()),
+    url(r'^cin', views.CinView.as_view()),
+    url(r'^gateway_stats', views.GatewayStatsView.as_view()),
+    url(r'^gateway_rx', views.GatewayRxView.as_view()),
+    url(r'^app_data', views.AppDataView.as_view()),
 ]

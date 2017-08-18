@@ -186,7 +186,7 @@ REST_FRAMEWORK = {
 #   mosquitto -c /usr/local/etc/mosquitto/mosquitto.conf
 MQTT_IP = "127.0.0.1"
 MQTT_PORT = 1883
-CHECK_MQTT_SERVER = False
+CHECK_MQTT_SERVER = True
 
 # IoTdm server
 IOTDM_IP = '127.0.0.1'

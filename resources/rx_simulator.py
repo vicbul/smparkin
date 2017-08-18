@@ -16,6 +16,7 @@ def random_data():
 #this is a simulation of the decripted payload post to MQTT application/appID/node/nodeEUI/rx topic
 def simulator():
     # MU_number = str(random.randrange(1,11))
+    print "Simulator triggered"
     MU_number = '1'
     simulated_payload = {
                           "applicationID": "0",
@@ -51,7 +52,7 @@ def run():
 
     for i in range(0,1):
         simulated_instance = simulator()
-        print simulated_instance
+        print "Simulated instance", simulated_instance
         payload = json.dumps(simulated_instance)
         client.publish(topic='application/'+simulated_instance['applicationID']+'/node/'+simulated_instance['devEUI']+'/rx',
                        payload=payload)

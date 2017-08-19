@@ -30,6 +30,7 @@ def on_message(client, userdata, msg):
                                   "phyPayload":str(json_msg['phyPayload'])
                               })
     elif msg.topic.find('application') != -1:
+        print "Creating new application"
         if msg.topic.find('/rx') != -1:
             decoded_data = base64.b64decode(json_msg['data'])
             r = requests.post('http://localhost:8000/resources/app_data/',
@@ -63,6 +64,7 @@ def on_message(client, userdata, msg):
             sensors_status = [int(s) for s in decoded_data[2:]]
             i = 1
             for s in sensors_status:
+                print "Creating sensor data"
                 sensor_cnt = requests.post('http://localhost:8000/resources/container/',
                                   json={
                                          "resourceID": str(json_msg['devEUI'])+'_'+str(i),

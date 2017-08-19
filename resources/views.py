@@ -78,7 +78,7 @@ class GetSensors(APIView):
         pass
 
 
-class ResourcesView(viewsets.ReadOnlyModelViewSet):
+class ResourcesView(viewsets.ReadOnlyModelViewSet): #ReadOnlyModelViewSet
 
     """
     list:
@@ -106,8 +106,7 @@ class ResourcesView(viewsets.ReadOnlyModelViewSet):
         serializer = self.get_serializer(descendants, many=True)
         return  Response(serializer.data)
 
-
-#---------------------#
+#----------  Creating resources when receiving   -----------#
 
 class AppView(APIView):
 
@@ -118,15 +117,17 @@ class AppView(APIView):
         return Response(serializer.data)
 
     def post(self, request, format=None):
-        print 'POST request received:', request.data['resourceID']
+        print 'APP POST request received:', request.data['resourceID']
         # If there is no resourceID create it, else update it
         if not APP.objects.filter(resourceID = request.data['resourceID']):
+            print "Creating resource"
             serializer = AppSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
+            print "Updating resource"
             existing_app = APP.objects.get(resourceID=request.data['resourceID'])
             print 'Updating',existing_app
             serializer = AppSerializer(existing_app, data=request.data)
@@ -146,18 +147,21 @@ class ContainerView(APIView):
         return Response(serializer.data)
 
     def post(self, request, format=None):
-        print 'POST request received:', #request.data
+        print 'Container POST request received:', request.data
         # If there is no resourceID create it, else update it
         if not CONTAINER.objects.filter(resourceID = request.data['resourceID']):
-            print Resource.objects.get(resourceID = request.data['parent'])
+            print "Creating resource"
+            print "Parent ID", Resource.objects.get(resourceID = request.data['parent']).id
             request.data['parent'] = Resource.objects.get(resourceID = request.data['parent']).id
-            serializer = ContainerSerializer(data=request.data)
+            print "Data parent", request.data
+            serializer = ContainerPostSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         # Updating the node may not be a good idea if we want to keep the edited name of the node
         else:
+            print "Updating resource"
             existing_cnt = CONTAINER.objects.get(resourceID=request.data['resourceID'])
             print 'Updating',existing_cnt
             serializer = AppSerializer(existing_cnt, data=request.data)
@@ -172,14 +176,14 @@ class CinView(APIView):
     def get(self, request, format=None):
         print 'GET request received:', #request.data
         resources = CONTENTINSTANCE.objects.all()
-        serializer = CinSerializer(resources, many=True)
+        serializer = CinPostSerializer(resources, many=True)
         return Response(serializer.data)
 
     def post(self, request, format=None):
         print 'POST request received:', #request.data
         print Resource.objects.get(resourceID = request.data['parent'])
         request.data['parent'] = Resource.objects.get(resourceID = request.data['parent']).id
-        serializer = CinSerializer(data=request.data)
+        serializer = CinPostSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)

@@ -48,6 +48,9 @@ class ParentSerializer(serializers.ModelSerializer):
         fields = ['id','name','creationTime','children']
 
 
+#------ Serializers for creating resources. Backwards compatibility with Data Simulator script -----#
+
+
 class AppSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -55,11 +58,11 @@ class AppSerializer(serializers.ModelSerializer):
         fields = ["name","resourceID"]
 
 
-# class ContainerSerializer(serializers.ModelSerializer):
-#
-#     class Meta:
-#         model = CONTAINER
-#         fields = ["name","resourceID","parent"]
+class ContainerPostSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = CONTAINER
+        fields = ["name","resourceID","parent"]
 
 
 class CinPostSerializer(serializers.ModelSerializer):
@@ -118,20 +121,5 @@ class AppDataSerializer(serializers.ModelSerializer):
 #         model = Status
 #         fields = ["time","lati","long","alti","rxnb","rxok","rxfw","ackr","dwnb","txnb"]
 
-#----------------------#
 
-class ResourceSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Resource
-        fields = ['id', 'name', 'parent', 'level']#'__all__'
-        # depth = 0
-
-
-class CinSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = CONTENTINSTANCE
-        fields = ["creationTime","name","parent","content"]
-        depth = 1
 

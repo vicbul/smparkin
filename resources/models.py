@@ -91,6 +91,14 @@ class Resource(PolymorphicMPTTModel):
         order_insertion_by = ['name']
 
 
+class Group(models.Model):
+    name = models.CharField(max_length=200, unique=True, blank=False, primary_key=True)
+    members = models.ManyToManyField(Resource, related_name='groups')
+
+    def __str__(self):
+        return self.name
+
+
 class CSE(Resource):
     #cseType = models.CharField(max_length=200, blank=True)
     resourceType = models.IntegerField(default=5, blank=False)
@@ -145,10 +153,13 @@ class CONTAINER(Resource):
     resourceType = models.IntegerField(default=3, blank=False)
     # parent_resource = models.ForeignKey(Resource, on_delete=models.CASCADE, related_name='Parent Resource', default=1)
 
+    # Method that returns the latest cin of the container in a quaryset or list
     def last_cin(self):
         try:
-            return self.cin.all().order_by('-creationTime')[:1]
-            # return self.cin.objects.latest('creationTime')
+            last_cin = self.cin.all().order_by('-creationTime')[:1]
+            print 'Last CIN:', last_cin
+            return last_cin
+
         except:
             return
 
@@ -280,6 +291,7 @@ class AppData(Model):
 
     def __str__(self):
         return str(self.id)
+
 
 # class Status(Model):
 #     time = models.DateTimeField(blank=True)

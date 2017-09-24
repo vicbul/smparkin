@@ -20,7 +20,7 @@ def simulator():
     MU_number = '1'
     simulated_payload = {
                           "applicationID": "0",
-                          "applicationName": "simulator",
+                          "applicationName": "simulator APP",
                           "nodeName": "MU_"+MU_number,
                           "devEUI": "000202090000000"+MU_number if int(MU_number) < 10 else "00020209000000"+MU_number, # "0002020800000000"
                           "rxInfo": [

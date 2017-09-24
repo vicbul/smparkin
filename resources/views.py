@@ -96,17 +96,19 @@ class ResourcesView(viewsets.ReadOnlyModelViewSet): #ReadOnlyModelViewSet
     ordering_fields = ('creationTime',)
     # search_fields = ('name',)
 
-    @detail_route(url_path = 'descendants')
+    @detail_route(url_path = 'nodes')
     def get_descendants(self, request, pk=None):
         """
         Lists all the descendants with an 'rx' container hanging from the given resource id.
         """
         resource = self.get_object()
         descendants = resource.get_descendants().filter(children__name='rx').order_by('children__children__creationTime')
-        serializer = self.get_serializer(descendants, many=True)
+        # descendants = resource.get_descendants().filter(name = 'rx').order_by('children__creationTime')
+        print 'Descendants', descendants
+        serializer = NodeSerializer(descendants, many=True)#self.get_serializer(descendants, many=True)
         return  Response(serializer.data)
 
-#----------  Creating resources when receiving   -----------#
+#----------  Creating resources when receiving POST notification from MQTT  -----------#
 
 class AppView(APIView):
 
@@ -117,7 +119,7 @@ class AppView(APIView):
         return Response(serializer.data)
 
     def post(self, request, format=None):
-        print 'APP POST request received:', request.data['resourceID']
+        print 'APP POST request received:', request.data.keys()#['applicationID']
         # If there is no resourceID create it, else update it
         if not APP.objects.filter(resourceID = request.data['resourceID']):
             print "Creating resource"

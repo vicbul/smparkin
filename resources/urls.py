@@ -134,7 +134,7 @@ def iotdm_django_sync(response):
 
 # ViewSets routers
 router = DefaultRouter()
-router.register(r'list_resources', views.ResourcesView)
+router.register(r'api', views.ResourcesView)
 
 
 urlpatterns = [
@@ -150,7 +150,7 @@ urlpatterns = [
     # url(r'^list_resources/$', views.ResourcesView.as_view({'get': 'list'})),
     url(r'^test', views.TestView.as_view()),
     #-------------------#
-    url(r'^app/$', views.AppView.as_view()),
+    url(r'^app', views.AppView.as_view()),
     url(r'^container', views.ContainerView.as_view()),
     url(r'^cin', views.CinView.as_view()),
     url(r'^gateway_stats', views.GatewayStatsView.as_view()),

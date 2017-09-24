@@ -80,9 +80,9 @@ class CommonAdmin(PolymorphicMPTTChildModelAdmin):
         ]
     # Here you can add read only fields for existing objects you want to update
     def get_readonly_fields(self, request, obj=None):
-        if obj:
-            # TODO add all fields that cannot be updated on IoTdm
-            return self.readonly_fields + ['name']
+        # if obj:
+        #     # TODO add all fields that cannot be updated on IoTdm
+        #     return self.readonly_fields + ['name']
         return self.readonly_fields
 
 
@@ -171,6 +171,12 @@ class GatewayRxAdmin(ModelAdmin):
 class AppDataAdmin(ModelAdmin):
     list_display = ["date","applicationID","applicationName","nodeName","devEUI","data", "data_decoded"]
 
+
+class GroupAdmin(ModelAdmin):
+    list_display = ['name']
+    filter_horizontal = ['members']
+
+
 # class StatusAdmin(ModelAdmin):
 #     list_display = ["time","lati","long","alti","rxnb","rxok","rxfw","ackr","dwnb","txnb"]
 
@@ -178,6 +184,7 @@ admin.site.register(Resource, CombinedAdmin)
 admin.site.register(GatewayStats, GatewayStatsAdmin)
 admin.site.register(GatewayRx, GatewayRxAdmin)
 admin.site.register(AppData, AppDataAdmin)
+admin.site.register(Group, GroupAdmin)
 # admin.site.register(test, TreeNodeParentAdmin)
 
 

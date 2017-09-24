@@ -24,7 +24,7 @@ class ContentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CONTENTINSTANCE
-        fields = ['content', 'creationTime']
+        fields = ['content']
 
 
 # this represent the rx/tx container
@@ -45,8 +45,26 @@ class ParentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Resource
-        fields = ['id','name','creationTime','children']
+        fields = ['id','name','creationTime','groups','children']
 
+
+
+# Serializer with a custom sensor satus field just for nodes
+class NodeSerializer(serializers.ModelSerializer):
+
+    # Adding a custom field for node serializer
+    sensor_status = serializers.SerializerMethodField()
+
+    # Method that extracts the content of last rx cin, which is the latest sensor status
+    def get_sensor_status(self, obj):
+        obj_rx = obj.get_children().get(name='rx')
+        print 'Children', obj_rx
+        return obj_rx.last_cin()[0].content
+
+    class Meta:
+        model = CONTAINER
+        fields = ['id', 'name','groups','sensor_status']#'__all__'
+        # depth = 0
 
 #------ Serializers for creating resources. Backwards compatibility with Data Simulator script -----#
 
